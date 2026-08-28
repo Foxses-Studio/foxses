@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Foxses - B2B Software Platform
 
-## Getting Started
+Welcome to **Foxses**, a modern B2B Software Platform built with [Next.js 16](https://nextjs.org), [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), and [Tailwind CSS v4](https://tailwindcss.com/).
 
-First, run the development server:
+---
+
+## 🌟 Key Features & Ecosystem
+
+### 🚀 Products
+- **Foxses Inventory**: Real-time stock management & inventory tracking
+- **Foxses Invoice**: Automated billing, invoicing & payment tracking
+- **Foxses Templates**: Premium responsive web & app design templates
+- **Cloud Forms**: Smart form builder & data collection platform
+- **Foxses HR**: Human resources, attendance, payroll & employee management
+- **F-Commerce**: Facebook commerce & social store automation solution
+- **Web Support System**: Customer support & help desk ticketing system
+
+### 💡 Solutions
+- **Small Businesses**: Tailored management platform for small businesses
+- **Retail & E-commerce**: Online & offline retail store management solutions
+- **Service Businesses**: Workflow automation for service providers & agencies
+- **Business Operations**: Streamline daily operational & management workflows
+
+### 📚 Resources
+- **Learn**: Announcements Hub, Security Solutions, Developer Center, Blog
+- **Explore**: Sara AI, Newsletter, The Long Game
+- **Support**: Knowledge Base, Concierge, Contact Us
+
+### 🏢 Company
+- **About Company**: About Foxses Studio, Our Story & Impact, Careers
+- **Success & Stories**: Case Studies, Customer Reviews, Press & Media
+- **Connect & Network**: Contact Us, Partners Program, Office Locations
+
+---
+
+## 🎨 Design System Constraints
+
+This project strictly adheres to the design rules defined in [`design.md`](./design.md):
+- **Minimum Font Size**: `16px` across all text elements.
+- **Elevation**: `shadow-none` (Zero box-shadow).
+- **Border Radius**: Maximum `8px` (`rounded-[8px]`).
+- **Animations**: Smooth slide-in right sidebar drawer powered by **GSAP**.
+
+---
+
+## 💻 Tech Stack
+
+- **Framework**: Next.js 16 (App Router with Turbopack)
+- **UI & Styling**: Tailwind CSS v4, Shadcn UI, React Icons
+- **Animation**: GSAP (GreenSock Animation Platform)
+- **Notifications**: SweetAlert2
+- **Language**: TypeScript
+
+---
+
+## 🛠️ Getting Started
+
+### 1. Installation
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/Foxses-software/foxses.git
+cd foxses
+npm install
+```
+
+### 2. Development
+Run the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Production Build
+To create an optimized production build:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private repository owned by **Foxses Software**. All rights reserved.
