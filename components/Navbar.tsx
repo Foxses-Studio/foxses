@@ -431,7 +431,7 @@ export default function Navbar({
           text: "Log in to your Foxses account.",
           icon: "info",
           confirmButtonText: "Continue",
-          confirmButtonColor: "#0d0d0d",
+          confirmButtonColor: "#f25b2a",
         });
       }
     });
@@ -447,7 +447,7 @@ export default function Navbar({
           text: "Start your free trial today. No credit card required.",
           icon: "success",
           confirmButtonText: "Create Account",
-          confirmButtonColor: "#0d0d0d",
+          confirmButtonColor: "#f25b2a",
         });
       }
     });
@@ -570,7 +570,7 @@ export default function Navbar({
                 variant="default"
                 size="default"
                 onClick={handleGetStarted}
-                className="bg-[#0d0d0d] hover:bg-zinc-800 text-white rounded-[8px] text-[16px] font-medium shadow-none px-5 py-2 h-10"
+                className="bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium shadow-none px-5 py-2 h-10 border-none transition-colors"
               >
                 Get Started Free
               </Button>
@@ -700,7 +700,7 @@ export default function Navbar({
               <Button
                 variant="default"
                 onClick={handleGetStarted}
-                className="w-full justify-center rounded-[8px] bg-[#0d0d0d] text-white text-[16px] font-medium shadow-none py-3"
+                className="w-full justify-center rounded-[8px] bg-[#f25b2a] hover:bg-[#d84b1b] text-white text-[16px] font-medium shadow-none py-3 border-none transition-colors"
               >
                 Get Started Free
               </Button>
