@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
 
 export default function Home() {
   // নেভিগেশন মেনু আইটেমসমূহ
@@ -20,8 +21,8 @@ export default function Home() {
         menuItems={menuItems}
       />
 
-      <main className="mx-auto max-w-[1600px] px-6 py-16 text-center lg:px-12">
-        {/* আপনার বাকি কাস্টম ডিজাইন এখানে তৈরি করতে পারেন */}
+      <main className="w-full">
+        <Hero />
       </main>
     </div>
   );
