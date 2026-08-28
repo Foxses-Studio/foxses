@@ -349,7 +349,7 @@ const defaultMenuItems: MenuItem[] = [
 ];
 
 export default function Navbar({
-  logoSrc = "/foxses-full-logo.png",
+  logoSrc = "/all-logo/foxses-full-logo.png",
   logoAlt = "Foxses Logo",
   logoHref = "/",
   menuItems = defaultMenuItems,

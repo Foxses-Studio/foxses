@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans">
       <Navbar
-        logoSrc="/foxses-full-logo.png"
+        logoSrc="/all-logo/foxses-full-logo.png"
         logoAlt="Foxses Logo"
         menuItems={menuItems}
       />
