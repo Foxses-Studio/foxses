@@ -14,7 +14,6 @@ import {
   FaArrowRight,
   FaCheck,
   FaWandMagicSparkles,
-  FaAngleRight,
 } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 
@@ -24,22 +23,20 @@ interface ProductCategory {
 }
 
 const categories: ProductCategory[] = [
-  { id: "all", name: "All Suite" },
-  { id: "inventory", name: "Inventory & Stock" },
-  { id: "invoice", name: "Invoice & Finance" },
+  { id: "all", name: "All Apps" },
+  { id: "inventory", name: "Inventory" },
+  { id: "invoice", name: "Invoice" },
   { id: "hr", name: "HR & Team" },
-  { id: "forms", name: "Forms & Data" },
-  { id: "support", name: "Helpdesk Support" },
+  { id: "forms", name: "Cloud Forms" },
+  { id: "support", name: "Support Desk" },
 ];
 
 interface ProductApp {
   id: string;
   categoryId: string;
   name: string;
-  subtitle: string;
   description: string;
   icon: React.ReactNode;
-  badge: string;
   href: string;
 }
 
@@ -48,60 +45,48 @@ const foxsesApps: ProductApp[] = [
     id: "inventory",
     categoryId: "inventory",
     name: "Foxses Inventory",
-    subtitle: "Stock & Warehouse",
-    description: "Real-time stock tracking, multi-location inventory & automated reorder alerts.",
-    icon: <FaBoxesPacking className="h-6 w-6 text-zinc-900 dark:text-white" />,
-    badge: "Core App",
+    description: "Real-time stock tracking and warehouse management.",
+    icon: <FaBoxesPacking className="h-5 w-5 text-[#f25b2a]" />,
     href: "/products/inventory",
   },
   {
     id: "invoice",
     categoryId: "invoice",
     name: "Foxses Invoice",
-    subtitle: "Billing & Accounting",
-    description: "Automated billing, professional invoicing, tax tracking & payment reminders.",
-    icon: <FaFileInvoiceDollar className="h-6 w-6 text-zinc-900 dark:text-white" />,
-    badge: "Finance",
+    description: "Automated billing, invoicing, and payment tracking.",
+    icon: <FaFileInvoiceDollar className="h-5 w-5 text-[#f25b2a]" />,
     href: "/products/invoice",
   },
   {
     id: "hr",
     categoryId: "hr",
     name: "Foxses HR",
-    subtitle: "Employee & Payroll",
-    description: "Attendance logging, payroll processing, leave management & team analytics.",
-    icon: <FaUsersGear className="h-6 w-6 text-zinc-900 dark:text-white" />,
-    badge: "People",
+    description: "Employee records, attendance, payroll, and team workflows.",
+    icon: <FaUsersGear className="h-5 w-5 text-[#f25b2a]" />,
     href: "/products/foxses-hr",
   },
   {
     id: "forms",
     categoryId: "forms",
     name: "Cloud Forms",
-    subtitle: "Form Builder & Surveys",
-    description: "Drag-and-drop form creation, responses collection & data organization.",
-    icon: <FaWpforms className="h-6 w-6 text-zinc-900 dark:text-white" />,
-    badge: "Cloud Tool",
+    description: "Smart forms and data collection for your business.",
+    icon: <FaWpforms className="h-5 w-5 text-[#f25b2a]" />,
     href: "/products/cloud-forms",
   },
   {
     id: "support",
     categoryId: "support",
     name: "Support System",
-    subtitle: "Helpdesk & Ticketing",
-    description: "Customer ticket tracking, live agent desk & support workflow automation.",
-    icon: <FaHeadset className="h-6 w-6 text-zinc-900 dark:text-white" />,
-    badge: "Customer Success",
+    description: "Customer helpdesk and automated support ticketing.",
+    icon: <FaHeadset className="h-5 w-5 text-[#f25b2a]" />,
     href: "/products/web-support-system",
   },
   {
     id: "templates",
     categoryId: "all",
     name: "Foxses Templates",
-    subtitle: "Business & Web Assets",
-    description: "Ready-to-use business documents, web layouts & productivity templates.",
-    icon: <FaLayerGroup className="h-6 w-6 text-zinc-900 dark:text-white" />,
-    badge: "Productivity",
+    description: "Ready-to-use business layouts and document templates.",
+    icon: <FaLayerGroup className="h-5 w-5 text-[#f25b2a]" />,
     href: "/products/templates",
   },
 ];
@@ -116,11 +101,11 @@ export default function Hero() {
 
   const handleGetStarted = () => {
     Swal.fire({
-      title: "Welcome to Foxses Studio",
-      text: "Start your free 14-day trial and connect all your business tools today.",
+      title: "Get Started Free",
+      text: "Start your 14-day trial with Foxses Studio.",
       icon: "success",
-      confirmButtonText: "Create Free Account",
-      confirmButtonColor: "#0d0d0d",
+      confirmButtonText: "Create Account",
+      confirmButtonColor: "#f25b2a",
       customClass: {
         popup: "rounded-[8px] shadow-none",
       },
@@ -130,10 +115,10 @@ export default function Hero() {
   const handleSaraAIModal = () => {
     Swal.fire({
       title: "Sara AI Agent Studio",
-      text: "Meet Sara AI — your intelligent assistant designed to automate workflows across Foxses Inventory, Invoice, HR, Forms & Support System.",
+      text: "Smart AI automation built across Foxses Inventory, Invoice, HR, Forms & Support.",
       icon: "info",
-      confirmButtonText: "Explore Sara AI",
-      confirmButtonColor: "#0d0d0d",
+      confirmButtonText: "Learn More",
+      confirmButtonColor: "#f25b2a",
       customClass: {
         popup: "rounded-[8px] shadow-none",
       },
@@ -141,48 +126,77 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-white dark:bg-zinc-950 pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-zinc-200/80 dark:border-zinc-800">
-      
-      {/* Background Subtle Gradient & Grid Patterns */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] pointer-events-none" />
-
-      <div className="relative mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 text-center">
+    <section className="relative bg-white dark:bg-zinc-950 pt-8 pb-16 lg:pt-12 lg:pb-20 border-b border-zinc-200/80 dark:border-zinc-800">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 text-center">
         
-        {/* Top Feature Announcement Pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 px-4 py-1.5 text-[16px] text-zinc-900 dark:text-zinc-200 transition-all hover:border-zinc-400 dark:hover:border-zinc-700 mb-8 cursor-pointer shadow-none" onClick={handleSaraAIModal}>
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-semibold flex items-center gap-1.5">
-            <FaWandMagicSparkles className="h-4 w-4 text-orange-500" />
-            Introducing Sara AI Agent Studio
-          </span>
-          <span className="text-zinc-400 dark:text-zinc-500">|</span>
-          <span className="text-zinc-600 dark:text-zinc-400 font-normal">Next-Gen Connected Apps</span>
-          <FaAngleRight className="h-3.5 w-3.5 text-zinc-500" />
+        {/* Top Feature Pill */}
+        <div
+          onClick={handleSaraAIModal}
+          className="inline-flex items-center gap-2 rounded-full border border-[#f25b2a]/30 bg-[#fff6f0] dark:bg-[#f25b2a]/10 px-4 py-1 text-[16px] text-[#f25b2a] font-medium transition-colors hover:border-[#f25b2a] mb-6 cursor-pointer shadow-none"
+        >
+          <FaWandMagicSparkles className="h-3.5 w-3.5 text-[#f25b2a]" />
+          <span>Sara AI Studio</span>
+          <span className="text-zinc-300 dark:text-zinc-700">•</span>
+          <span className="text-zinc-600 dark:text-zinc-300 font-normal">Connected Apps 2.0</span>
+          <FaArrowRight className="h-3 w-3 text-[#f25b2a] ml-1" />
         </div>
 
-        {/* Main Headline */}
-        <h1 className="mx-auto max-w-5xl text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-6xl lg:text-7xl leading-[1.15]">
-          Your whole business operations, <br className="hidden sm:inline" />
-          <span className="bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 dark:from-white dark:via-zinc-300 dark:to-white bg-clip-text text-transparent">
-            connected in one unified platform
-          </span>
+        {/* Clean, Sleek Headline */}
+        <h1 className="mx-auto max-w-4xl text-3xl font-semibold text-zinc-900 dark:text-white sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+          Connected Cloud Software <br className="hidden sm:inline" />
+          <span className="text-[#f25b2a] font-bold">Built for Modern Businesses</span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-3xl text-[16px] sm:text-xl text-zinc-600 dark:text-zinc-300 leading-relaxed font-normal">
-          Foxses Studio builds simple, practical, and connected cloud software to run your inventory, invoicing, HR, forms, and customer support—all working seamlessly together.
+        {/* Short, Concise Subtitle */}
+        <p className="mx-auto mt-4 max-w-2xl text-[16px] sm:text-lg text-zinc-600 dark:text-zinc-300 font-normal leading-relaxed">
+          Manage inventory, invoicing, HR, forms, and customer support in one connected platform.
         </p>
 
-        {/* Category Filter Pills (Monday.com style) */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
+        {/* Action Buttons */}
+        <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button
+            size="default"
+            onClick={handleGetStarted}
+            className="w-full sm:w-auto bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium px-7 h-11 shadow-none gap-2 border-none"
+          >
+            <span>Get Started Free</span>
+            <FaArrowRight className="h-3.5 w-3.5" />
+          </Button>
+
+          <Button
+            variant="outline"
+            size="default"
+            onClick={() => {
+              const el = document.getElementById("apps-grid");
+              el?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="w-full sm:w-auto rounded-[8px] border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[16px] font-medium px-6 h-11 shadow-none hover:bg-zinc-50 dark:hover:bg-zinc-900"
+          >
+            Explore Apps
+          </Button>
+        </div>
+
+        {/* Trust Points */}
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[16px] text-zinc-500 dark:text-zinc-400 font-normal">
+          <span className="flex items-center gap-1.5">
+            <FaCheck className="h-3.5 w-3.5 text-[#f25b2a]" /> No credit card required
+          </span>
+          <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">•</span>
+          <span className="flex items-center gap-1.5">
+            <FaCheck className="h-3.5 w-3.5 text-[#f25b2a]" /> 14-day free trial
+          </span>
+        </div>
+
+        {/* Category Pills */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`rounded-[8px] px-4 py-2 text-[16px] font-medium transition-all shadow-none cursor-pointer border ${
+              className={`rounded-[8px] px-3.5 py-1.5 text-[16px] font-medium transition-all shadow-none cursor-pointer border ${
                 selectedCategory === cat.id
-                  ? "bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900 dark:border-white"
-                  : "bg-zinc-100 text-zinc-700 border-zinc-200 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800 dark:hover:bg-zinc-800"
+                  ? "bg-[#f25b2a] text-white border-[#f25b2a]"
+                  : "bg-zinc-100/80 text-zinc-700 border-zinc-200 hover:bg-zinc-200/60 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800"
               }`}
             >
               {cat.name}
@@ -190,84 +204,34 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            size="lg"
-            onClick={handleGetStarted}
-            className="w-full sm:w-auto bg-[#0d0d0d] hover:bg-zinc-800 text-white rounded-[8px] text-[16px] font-semibold px-8 h-12 shadow-none gap-2"
-          >
-            <span>Get Started For Free</span>
-            <FaArrowRight className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => {
-              const el = document.getElementById("featured-apps-section");
-              el?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="w-full sm:w-auto rounded-[8px] border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-white text-[16px] font-medium px-8 h-12 shadow-none"
-          >
-            Explore All Products
-          </Button>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[16px] text-zinc-500 dark:text-zinc-400 font-medium">
-          <span className="flex items-center gap-2">
-            <FaCheck className="h-4 w-4 text-emerald-600" />
-            No credit card needed
-          </span>
-          <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">•</span>
-          <span className="flex items-center gap-2">
-            <FaCheck className="h-4 w-4 text-emerald-600" />
-            Free 14-day trial
-          </span>
-          <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">•</span>
-          <span className="flex items-center gap-2">
-            <FaCheck className="h-4 w-4 text-emerald-600" />
-            Instant cloud setup
-          </span>
-        </div>
-
-        {/* Featured Apps & AI Spotlight Grid (Zoho / Salesforce Style) */}
-        <div id="featured-apps-section" className="mt-14 sm:mt-16 text-left">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Connected Apps Grid */}
+        <div id="apps-grid" className="mt-10 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             
-            {/* Left AI Spotlight Banner Card (Zia / Sara AI Card) */}
-            <div className="lg:col-span-4 rounded-[8px] bg-gradient-to-br from-zinc-900 via-zinc-950 to-black p-8 text-white flex flex-col justify-between border border-zinc-800 shadow-none relative overflow-hidden group">
-              
-              {/* Decorative Glow */}
-              <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-orange-600/20 blur-3xl group-hover:bg-orange-500/30 transition-all" />
-              
+            {/* Left AI Spotlight Banner Card */}
+            <div className="lg:col-span-4 rounded-[8px] border border-[#f25b2a]/20 bg-gradient-to-b from-[#fff6f0] to-white dark:from-zinc-900 dark:to-zinc-950 p-6 flex flex-col justify-between shadow-none">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-[8px] bg-white/10 px-3 py-1 text-[16px] font-medium text-orange-400 border border-white/10 mb-6">
+                <div className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#f25b2a]/10 px-2.5 py-1 text-[16px] font-semibold text-[#f25b2a] mb-4">
                   <FaRobot className="h-4 w-4" />
-                  <span>INTELLIGENT AI</span>
+                  <span>AI AUTOMATION</span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
-                  Introducing <br />
-                  <span className="text-orange-400">Sara AI Agent Studio</span>
+                <h3 className="text-2xl font-semibold text-zinc-900 dark:text-white mb-2">
+                  Sara AI Studio
                 </h3>
 
-                <p className="text-[16px] text-zinc-300 leading-relaxed font-normal mb-6">
-                  Deploy autonomous AI agents that analyze inventory, generate automated invoices, streamline HR workflows, and respond to support tickets automatically.
+                <p className="text-[16px] text-zinc-600 dark:text-zinc-300 font-normal leading-relaxed mb-6">
+                  Intelligent AI automation designed to assist inventory control, invoicing, HR tasks, and customer support tickets.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                <Button
-                  onClick={handleSaraAIModal}
-                  className="w-full bg-white text-zinc-950 hover:bg-zinc-100 font-semibold rounded-[8px] text-[16px] h-11 justify-between shadow-none"
-                >
-                  <span>Explore Sara AI</span>
-                  <FaArrowRight className="h-4 w-4" />
-                </Button>
-                <span className="text-[16px] text-zinc-400 text-center">Connected across all Foxses apps</span>
-              </div>
+              <Button
+                onClick={handleSaraAIModal}
+                className="w-full bg-[#f25b2a] hover:bg-[#d84b1b] text-white font-medium rounded-[8px] text-[16px] h-10 justify-between shadow-none border-none"
+              >
+                <span>Learn About Sara AI</span>
+                <FaArrowRight className="h-3.5 w-3.5" />
+              </Button>
             </div>
 
             {/* Right Connected Products Cards Grid */}
@@ -275,61 +239,33 @@ export default function Hero() {
               {filteredApps.map((app) => (
                 <div
                   key={app.id}
-                  className="group rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 flex flex-col justify-between hover:border-zinc-400 dark:hover:border-zinc-700 transition-all shadow-none"
+                  className="group rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col justify-between hover:border-[#f25b2a]/50 transition-colors shadow-none"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="p-3 rounded-[8px] bg-zinc-100 dark:bg-zinc-800 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition-colors">
-                        {app.icon}
-                      </div>
-                      <span className="text-[16px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
-                        {app.badge}
-                      </span>
+                    <div className="p-2.5 w-fit rounded-[8px] bg-[#fff6f0] dark:bg-zinc-800 mb-3">
+                      {app.icon}
                     </div>
 
-                    <h4 className="text-xl font-bold text-zinc-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    <h4 className="text-lg font-semibold text-zinc-900 dark:text-white group-hover:text-[#f25b2a] transition-colors">
                       {app.name}
                     </h4>
-                    <span className="text-[16px] font-semibold text-zinc-500 dark:text-zinc-400 block mb-2">
-                      {app.subtitle}
-                    </span>
 
-                    <p className="text-[16px] text-zinc-600 dark:text-zinc-300 font-normal leading-relaxed mb-6">
+                    <p className="text-[16px] text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed mt-1.5 mb-4">
                       {app.description}
                     </p>
                   </div>
 
                   <Link
                     href={app.href}
-                    className="inline-flex items-center gap-2 text-[16px] font-semibold text-zinc-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition-colors pt-3 border-t border-zinc-100 dark:border-zinc-800"
+                    className="inline-flex items-center gap-1.5 text-[16px] font-medium text-[#f25b2a] hover:text-[#d84b1b] transition-colors pt-3 border-t border-zinc-100 dark:border-zinc-800"
                   >
-                    <span>Explore Product</span>
-                    <FaArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    <span>View Product</span>
+                    <FaArrowRight className="h-3 w-3" />
                   </Link>
                 </div>
               ))}
             </div>
 
-          </div>
-        </div>
-
-        {/* Stats & Trust Bar */}
-        <div className="mt-16 sm:mt-20 pt-10 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="flex flex-col">
-            <span className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">10,000+</span>
-            <span className="text-[16px] font-normal text-zinc-500 dark:text-zinc-400 mt-1">Growing Businesses</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">99.9%</span>
-            <span className="text-[16px] font-normal text-zinc-500 dark:text-zinc-400 mt-1">Cloud Uptime</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">6+</span>
-            <span className="text-[16px] font-normal text-zinc-500 dark:text-zinc-400 mt-1">Connected Products</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white">24/7</span>
-            <span className="text-[16px] font-normal text-zinc-500 dark:text-zinc-400 mt-1">Dedicated Support</span>
           </div>
         </div>
 

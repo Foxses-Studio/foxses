@@ -514,7 +514,7 @@ export default function Navbar({
                                     {subItem.icon}
                                   </div>
                                   <div className="flex flex-col text-left">
-                                    <span className="text-[16px] font-medium text-zinc-900 dark:text-white group-hover/item:text-orange-600 dark:group-hover/item:text-orange-400 transition-colors">
+                                    <span className="text-[16px] font-medium text-zinc-900 dark:text-white group-hover/item:text-[#f25b2a] transition-colors">
                                       {subItem.title}
                                     </span>
                                     <span className="text-[16px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
@@ -530,7 +530,7 @@ export default function Navbar({
                               <div className="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
                                 <Link
                                   href={item.href}
-                                  className="inline-flex items-center gap-2 text-[16px] font-medium text-zinc-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                                  className="inline-flex items-center gap-2 text-[16px] font-medium text-zinc-900 dark:text-white hover:text-[#f25b2a] transition-colors"
                                 >
                                   <span>View all {item.label}</span>
                                   <FaArrowRight className="h-3.5 w-3.5" />
