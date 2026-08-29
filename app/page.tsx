@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import TrustedBy from "@/components/TrustedBy";
 
 export default function Home() {
   // নেভিগেশন মেনু আইটেমসমূহ
@@ -16,13 +17,15 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans">
       <Navbar
-        logoSrc="/all-logo/foxses-full-logo.png"
+        lightLogoSrc="/all-logo/foxses-full-logo-for-light-them.png"
+        darkLogoSrc="/all-logo/foxses-full-logo-for-dark-them.png"
         logoAlt="Foxses Logo"
         menuItems={menuItems}
       />
 
       <main className="w-full">
         <Hero />
+        <TrustedBy />
       </main>
     </div>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import {
@@ -16,20 +15,7 @@ import {
   FaWandMagicSparkles,
 } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
-
-interface ProductCategory {
-  id: string;
-  name: string;
-}
-
-const categories: ProductCategory[] = [
-  { id: "all", name: "All Apps" },
-  { id: "inventory", name: "Inventory" },
-  { id: "invoice", name: "Invoice" },
-  { id: "hr", name: "HR & Team" },
-  { id: "forms", name: "Cloud Forms" },
-  { id: "support", name: "Support Desk" },
-];
+import { AnimatedGridBackground } from "@/components/AnimatedGridBackground";
 
 interface ProductApp {
   id: string;
@@ -92,13 +78,6 @@ const foxsesApps: ProductApp[] = [
 ];
 
 export default function Hero() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-
-  const filteredApps =
-    selectedCategory === "all"
-      ? foxsesApps
-      : foxsesApps.filter((app) => app.categoryId === selectedCategory);
-
   const handleGetStarted = () => {
     Swal.fire({
       title: "Get Started Free",
@@ -126,19 +105,23 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative bg-white dark:bg-zinc-950 pt-8 pb-16 lg:pt-12 lg:pb-20 border-b border-zinc-200/80 dark:border-zinc-800">
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 text-center">
+    <section className="relative overflow-hidden bg-white dark:bg-zinc-950 pt-8 pb-16 lg:pt-12 lg:pb-20 border-b border-zinc-200/80 dark:border-zinc-800">
+      
+      {/* Background Grid Pattern */}
+      <AnimatedGridBackground />
+
+      <div className="relative z-10 mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12 text-center">
         
         {/* Top Feature Pill */}
         <div
           onClick={handleSaraAIModal}
-          className="inline-flex items-center gap-2 rounded-full border border-[#f25b2a]/30 bg-[#fff6f0] dark:bg-[#f25b2a]/10 px-4 py-1 text-[16px] text-[#f25b2a] font-medium transition-colors hover:border-[#f25b2a] mb-6 cursor-pointer shadow-none"
+          className="group inline-flex items-center gap-2 rounded-full border border-[#f25b2a]/30 bg-[#fff6f0] dark:bg-[#f25b2a]/10 px-4 py-1 text-[16px] text-[#f25b2a] font-medium transition-all duration-200 hover:border-[#f25b2a] hover:scale-105 active:scale-95 mb-6 cursor-pointer shadow-none"
         >
-          <FaWandMagicSparkles className="h-3.5 w-3.5 text-[#f25b2a]" />
+          <FaWandMagicSparkles className="h-3.5 w-3.5 text-[#f25b2a] transition-transform duration-300 group-hover:rotate-12" />
           <span>Sara AI Studio</span>
           <span className="text-zinc-300 dark:text-zinc-700">•</span>
           <span className="text-zinc-600 dark:text-zinc-300 font-normal">Connected Apps 2.0</span>
-          <FaArrowRight className="h-3 w-3 text-[#f25b2a] ml-1" />
+          <FaArrowRight className="h-3 w-3 text-[#f25b2a] ml-1 transition-transform duration-300 group-hover:translate-x-1" />
         </div>
 
         {/* Clean, Sleek Headline */}
@@ -157,10 +140,10 @@ export default function Hero() {
           <Button
             size="default"
             onClick={handleGetStarted}
-            className="w-full sm:w-auto bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium px-7 h-11 shadow-none gap-2 border-none"
+            className="group w-full sm:w-auto bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium px-7 h-11 shadow-none gap-2 border-none transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
           >
             <span>Get Started Free</span>
-            <FaArrowRight className="h-3.5 w-3.5" />
+            <FaArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
 
           <Button
@@ -170,7 +153,7 @@ export default function Hero() {
               const el = document.getElementById("apps-grid");
               el?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="w-full sm:w-auto rounded-[8px] border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[16px] font-medium px-6 h-11 shadow-none hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            className="w-full sm:w-auto rounded-[8px] border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-[16px] font-medium px-6 h-11 shadow-none hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
           >
             Explore Apps
           </Button>
@@ -187,29 +170,12 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* Category Pills */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`rounded-[8px] px-3.5 py-1.5 text-[16px] font-medium transition-all shadow-none cursor-pointer border ${
-                selectedCategory === cat.id
-                  ? "bg-[#f25b2a] text-white border-[#f25b2a]"
-                  : "bg-zinc-100/80 text-zinc-700 border-zinc-200 hover:bg-zinc-200/60 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800"
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
         {/* Connected Apps Grid */}
         <div id="apps-grid" className="mt-10 text-left">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             
-            {/* Left AI Spotlight Banner Card */}
-            <div className="lg:col-span-4 rounded-[8px] border border-[#f25b2a]/20 bg-gradient-to-b from-[#fff6f0] to-white dark:from-zinc-900 dark:to-zinc-950 p-6 flex flex-col justify-between shadow-none">
+            {/* Left AI Spotlight Banner Card (Fixed 4 columns out of 12) */}
+            <div className="lg:col-span-4 rounded-[8px] border border-[#f25b2a]/20 bg-gradient-to-b from-[#fff6f0] to-white dark:from-zinc-900 dark:to-zinc-950 p-6 flex flex-col justify-between shadow-none hover:border-[#f25b2a]/40 transition-all duration-200">
               <div>
                 <div className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#f25b2a]/10 px-2.5 py-1 text-[16px] font-semibold text-[#f25b2a] mb-4">
                   <FaRobot className="h-4 w-4" />
@@ -227,22 +193,22 @@ export default function Hero() {
 
               <Button
                 onClick={handleSaraAIModal}
-                className="w-full bg-[#f25b2a] hover:bg-[#d84b1b] text-white font-medium rounded-[8px] text-[16px] h-10 justify-between shadow-none border-none"
+                className="group w-full bg-[#f25b2a] hover:bg-[#d84b1b] text-white font-medium rounded-[8px] text-[16px] h-10 justify-between shadow-none border-none transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
                 <span>Learn About Sara AI</span>
-                <FaArrowRight className="h-3.5 w-3.5" />
+                <FaArrowRight className="h-3.5 w-3.5 -rotate-45 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Button>
             </div>
 
-            {/* Right Connected Products Cards Grid */}
+            {/* Right Connected Products Cards Grid (Fixed 8 columns out of 12) */}
             <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredApps.map((app) => (
+              {foxsesApps.map((app) => (
                 <div
                   key={app.id}
-                  className="group rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col justify-between hover:border-[#f25b2a]/50 transition-colors shadow-none"
+                  className="group rounded-[8px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col justify-between hover:border-[#f25b2a]/50 transition-all duration-200 hover:-translate-y-1 shadow-none"
                 >
                   <div>
-                    <div className="p-2.5 w-fit rounded-[8px] bg-[#fff6f0] dark:bg-zinc-800 mb-3">
+                    <div className="p-2.5 w-fit rounded-[8px] bg-[#fff6f0] dark:bg-zinc-800 mb-3 group-hover:scale-105 transition-transform">
                       {app.icon}
                     </div>
 
@@ -257,10 +223,11 @@ export default function Hero() {
 
                   <Link
                     href={app.href}
-                    className="inline-flex items-center gap-1.5 text-[16px] font-medium text-[#f25b2a] hover:text-[#d84b1b] transition-colors pt-3 border-t border-zinc-100 dark:border-zinc-800"
+                    className="inline-flex items-center gap-1.5 text-[16px] font-medium text-[#f25b2a] hover:text-[#d84b1b] transition-colors pt-3 border-t border-zinc-100 dark:border-zinc-800 group/link"
                   >
                     <span>View Product</span>
-                    <FaArrowRight className="h-3 w-3" />
+                    {/* 45 Degree Arrow with Top-Right Hover Translation */}
+                    <FaArrowRight className="h-3.5 w-3.5 -rotate-45 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
                   </Link>
                 </div>
               ))}

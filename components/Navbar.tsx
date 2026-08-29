@@ -42,6 +42,7 @@ import {
   FaLocationDot,
 } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import gsap from "gsap";
 
 export interface DropdownItem {
@@ -65,6 +66,8 @@ export interface MenuItem {
 }
 
 export interface NavbarProps {
+  lightLogoSrc?: string;
+  darkLogoSrc?: string;
   logoSrc?: string;
   logoAlt?: string;
   logoHref?: string;
@@ -72,6 +75,7 @@ export interface NavbarProps {
   onLoginClick?: () => void;
   onGetStartedClick?: () => void;
 }
+
 
 export const defaultProductsMegaMenu: DropdownColumn[] = [
   {
@@ -349,6 +353,8 @@ const defaultMenuItems: MenuItem[] = [
 ];
 
 export default function Navbar({
+  lightLogoSrc = "/all-logo/foxses-full-logo-for-light-them.png",
+  darkLogoSrc = "/all-logo/foxses-full-logo-for-dark-them.png",
   logoSrc = "/all-logo/foxses-full-logo.png",
   logoAlt = "Foxses Logo",
   logoHref = "/",
@@ -415,10 +421,7 @@ export default function Navbar({
   };
 
   const toggleDropdown = (label: string) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setExpandedItems((prev) => (prev[label] ? {} : { [label]: true }));
   };
 
   const handleLogin = () => {
@@ -464,18 +467,26 @@ export default function Navbar({
 
   return (
     <>
-      <header className="relative sticky top-0 z-40 w-full bg-white dark:bg-zinc-950 border-b border-zinc-200/80 dark:border-zinc-800 shadow-none transition-all">
+      <header className="relative sticky top-0 z-40 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/80 dark:border-zinc-800 shadow-none transition-all">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
           
-          {/* Left Side: Logo */}
+          {/* Left Side: Logo (Light and Dark theme versions) */}
           <div className="flex items-center">
             <Link href={logoHref} className="flex items-center gap-2 group">
               <Image
-                src={logoSrc}
+                src={lightLogoSrc || logoSrc}
                 alt={logoAlt}
                 width={240}
                 height={60}
-                className="h-12 sm:h-[58px] w-auto object-contain transition-all"
+                className="h-12 sm:h-[58px] w-auto object-contain transition-all dark:hidden"
+                priority
+              />
+              <Image
+                src={darkLogoSrc || logoSrc}
+                alt={logoAlt}
+                width={240}
+                height={60}
+                className="h-12 sm:h-[58px] w-auto object-contain transition-all hidden dark:block"
                 priority
               />
             </Link>
@@ -556,11 +567,13 @@ export default function Navbar({
             )}
           </nav>
 
-          {/* Right Side: Desktop Buttons + Mobile Login & Right Sidebar Hamburger Toggle */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          {/* Right Side: Theme Toggle + Desktop Buttons + Mobile Login & Right Sidebar Hamburger Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle />
+
             <button
               onClick={handleLogin}
-              className="text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors px-2 py-1"
+              className="text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-[#f25b2a] dark:hover:text-[#f25b2a] transition-all duration-200 hover:scale-105 active:scale-95 px-3 py-1.5 cursor-pointer"
             >
               Login
             </button>
@@ -570,7 +583,7 @@ export default function Navbar({
                 variant="default"
                 size="default"
                 onClick={handleGetStarted}
-                className="bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium shadow-none px-5 py-2 h-10 border-none transition-colors"
+                className="bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium shadow-md shadow-[#f25b2a]/20 hover:shadow-lg hover:shadow-[#f25b2a]/40 hover:scale-105 active:scale-95 px-5 py-2 h-10 border-none transition-all duration-300 cursor-pointer"
               >
                 Get Started Free
               </Button>
@@ -581,9 +594,9 @@ export default function Navbar({
               size="icon"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open Right Sidebar Menu"
-              className="text-zinc-900 dark:text-zinc-100 rounded-[8px] shadow-none h-11 w-11 hover:bg-zinc-200/60 dark:hover:bg-zinc-800"
+              className="group text-zinc-900 dark:text-zinc-100 rounded-[8px] h-11 w-11 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all duration-300 cursor-pointer"
             >
-              <FaBars className="h-6 w-6" />
+              <FaBars className="h-6 w-6 transition-transform duration-300 group-hover:rotate-12" />
             </Button>
           </div>
         </div>
@@ -600,26 +613,38 @@ export default function Navbar({
 
           <aside
             ref={sidebarRef}
-            className="relative z-10 w-full max-w-[340px] sm:max-w-[380px] bg-white dark:bg-zinc-950 h-full flex flex-col justify-between p-6 border-l border-zinc-200 dark:border-zinc-800 shadow-none overflow-y-auto"
+            className="relative z-10 w-full max-w-[340px] sm:max-w-[380px] bg-white dark:bg-zinc-950 h-full flex flex-col justify-between p-6 border-l border-zinc-200 dark:border-zinc-800 shadow-none overflow-y-auto no-scrollbar"
           >
             <div>
               <div className="flex items-center justify-between pb-6 border-b border-zinc-200 dark:border-zinc-800 gsap-sidebar-item">
-                <Image
-                  src={logoSrc}
-                  alt={logoAlt}
-                  width={200}
-                  height={50}
-                  className="h-12 w-auto object-contain"
-                />
+                <div className="flex items-center">
+                  <Image
+                    src={lightLogoSrc || logoSrc}
+                    alt={logoAlt}
+                    width={200}
+                    height={50}
+                    className="h-12 w-auto object-contain dark:hidden"
+                  />
+                  <Image
+                    src={darkLogoSrc || logoSrc}
+                    alt={logoAlt}
+                    width={200}
+                    height={50}
+                    className="h-12 w-auto object-contain hidden dark:block"
+                  />
+                </div>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => closeSidebar()}
-                  className="rounded-[8px] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800"
-                >
-                  <FaXmark className="h-6 w-6" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <ThemeToggle />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => closeSidebar()}
+                    className="group rounded-[8px] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all duration-300"
+                  >
+                    <FaXmark className="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" />
+                  </Button>
+                </div>
               </div>
 
               {/* Sidebar Menu Items */}
@@ -631,54 +656,57 @@ export default function Navbar({
                         <button
                           type="button"
                           onClick={() => toggleDropdown(item.label)}
-                          className="w-full flex items-center justify-between rounded-[8px] px-4 py-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer transition-colors text-left"
+                          className="w-full flex items-center justify-between rounded-[8px] px-4 py-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer transition-all duration-200 text-left group/btn"
                         >
-                          <span>{item.label}</span>
+                          <span className="group-hover/btn:text-[#f25b2a] transition-colors">{item.label}</span>
                           <FaChevronDown
-                            className={`h-4 w-4 text-zinc-500 transition-transform ${
-                              expandedItems[item.label] ? "rotate-180" : ""
+                            className={`h-4 w-4 text-zinc-500 transition-all duration-300 ${
+                              expandedItems[item.label] ? "rotate-180 text-[#f25b2a]" : "group-hover/btn:text-[#f25b2a]"
                             }`}
                           />
                         </button>
 
-                        {/* Expandable Mobile Submenu */}
-                        {expandedItems[item.label] && (
-                          <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 py-2 space-y-3 my-1">
-                            {getMegaMenuData(item).map((column, colIdx) => (
-                              <div key={`mob-col-${colIdx}`} className="flex flex-col space-y-2">
-                                <span className="text-[16px] font-semibold text-zinc-400 uppercase tracking-wider">
-                                  {column.title}
-                                </span>
-                                {column.items.map((subItem, itemIdx) => (
-                                  <Link
-                                    key={`mob-sub-${itemIdx}`}
-                                    href={subItem.href}
-                                    onClick={() => closeSidebar()}
-                                    className="flex items-start gap-2.5 p-2 rounded-[8px] hover:bg-zinc-100 dark:hover:bg-zinc-900"
-                                  >
-                                    <div className="p-1.5 rounded-[8px] bg-zinc-100 dark:bg-zinc-800">
-                                      {subItem.icon}
-                                    </div>
-                                    <div className="flex flex-col text-left">
-                                      <span className="text-[16px] font-medium text-zinc-900 dark:text-white">
+                        {/* Expandable Mobile Submenu with Buttery Smooth CSS Grid Accordion Transition */}
+                        <div
+                          className={`grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                            expandedItems[item.label]
+                              ? "grid-rows-[1fr] opacity-100 mt-2 mb-1"
+                              : "grid-rows-[0fr] opacity-0 my-0"
+                          }`}
+                        >
+                          <div className="overflow-hidden">
+                            <div className="ml-4 pl-3 border-l-2 border-[#f25b2a]/40 dark:border-[#f25b2a]/60 py-2 space-y-3">
+                              {getMegaMenuData(item).map((column, colIdx) => (
+                                <div key={`mob-col-${colIdx}`} className="flex flex-col space-y-2">
+                                  <span className="text-[13px] font-semibold text-[#f25b2a] uppercase tracking-wider px-2 pt-1">
+                                    {column.title}
+                                  </span>
+                                  {column.items.map((subItem, itemIdx) => (
+                                    <Link
+                                      key={`mob-sub-${itemIdx}`}
+                                      href={subItem.href}
+                                      onClick={() => closeSidebar()}
+                                      className="group/sub flex items-center gap-2.5 px-2.5 py-2 rounded-[8px] hover:bg-zinc-100 dark:hover:bg-zinc-900/90 transition-all duration-200 hover:translate-x-1.5"
+                                    >
+                                      <div className="p-1.5 rounded-[6px] bg-zinc-100 dark:bg-zinc-800/90 group-hover/sub:bg-[#f25b2a]/10 dark:group-hover/sub:bg-[#f25b2a]/20 transition-colors flex-shrink-0">
+                                        {subItem.icon}
+                                      </div>
+                                      <span className="text-[15px] font-medium text-zinc-800 dark:text-zinc-200 group-hover/sub:text-[#f25b2a] transition-colors">
                                         {subItem.title}
                                       </span>
-                                      <span className="text-[16px] text-zinc-500 dark:text-zinc-400">
-                                        {subItem.description}
-                                      </span>
-                                    </div>
-                                  </Link>
-                                ))}
-                              </div>
-                            ))}
+                                    </Link>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        )}
+                        </div>
                       </>
                     ) : (
                       <Link
                         href={item.href}
                         onClick={() => closeSidebar()}
-                        className="block rounded-[8px] px-4 py-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                        className="block rounded-[8px] px-4 py-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all hover:translate-x-1"
                       >
                         {item.label}
                       </Link>
@@ -692,7 +720,7 @@ export default function Navbar({
             <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col space-y-3 gsap-sidebar-item">
               <button
                 onClick={handleLogin}
-                className="w-full py-3 text-center text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-zinc-600 transition-colors"
+                className="w-full py-3 text-center text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-[#f25b2a] transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 Login
               </button>
@@ -700,7 +728,7 @@ export default function Navbar({
               <Button
                 variant="default"
                 onClick={handleGetStarted}
-                className="w-full justify-center rounded-[8px] bg-[#f25b2a] hover:bg-[#d84b1b] text-white text-[16px] font-medium shadow-none py-3 border-none transition-colors"
+                className="w-full justify-center rounded-[8px] bg-[#f25b2a] hover:bg-[#d84b1b] text-white text-[16px] font-medium shadow-md shadow-[#f25b2a]/20 hover:shadow-lg hover:shadow-[#f25b2a]/40 hover:scale-105 active:scale-95 py-3 border-none transition-all duration-300 cursor-pointer"
               >
                 Get Started Free
               </Button>
