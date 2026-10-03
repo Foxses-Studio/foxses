@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { ArrowRight, Boxes, Network, ReceiptText, Sparkles } from "lucide-react";
+import { ArrowRight, Boxes, Cloud, CodeXml, Network } from "lucide-react";
 
 // Canvas globe is client-only and loaded separately from the main bundle
 const EcosystemGlobe = dynamic(() => import("@/components/ecosystem/EcosystemGlobe"), {
@@ -10,23 +10,28 @@ const EcosystemGlobe = dynamic(() => import("@/components/ecosystem/EcosystemGlo
   loading: () => <div className="aspect-square w-full" />,
 });
 
-const SIGNALS = ["Operations", "Finance", "People", "Customers", "AI"];
+// What makes the ecosystem different — principles, not product claims
+const SIGNALS = ["Simple", "Practical", "Connected", "Developer-friendly"];
 
+// "What we build" — the three areas of the Foxses ecosystem
 const CAPABILITIES = [
   {
     icon: Boxes,
-    title: "Operations",
-    description: "Inventory, forms and workflows stay connected as your business moves.",
+    title: "Business Software",
+    description: "Tools that help businesses manage everyday operations.",
+    items: "Invoice · Inventory · HR · Forms · Support",
   },
   {
-    icon: ReceiptText,
-    title: "Finance & Customers",
-    description: "Invoices, payments and customer activity stay synchronized.",
+    icon: Cloud,
+    title: "Cloud & Infrastructure",
+    description: "Infrastructure that helps businesses establish and operate online.",
+    items: "Domains · Hosting · Cloud services",
   },
   {
-    icon: Sparkles,
-    title: "People & Intelligence",
-    description: "Your teams and Sara AI work from the same connected business context.",
+    icon: CodeXml,
+    title: "Developer Tools",
+    description: "Tools and APIs that make software development easier.",
+    items: "Payments · APIs · SDKs · Integrations",
   },
 ];
 
@@ -90,8 +95,9 @@ export default function EcosystemSection() {
               <p
                 className={`mt-6 max-w-[500px] text-[16px] sm:text-lg text-zinc-600 dark:text-zinc-300 font-normal leading-relaxed ${reveal("delay-200")}`}
               >
-                Foxses brings your operations, finance, people, customers, data and
-                AI together in one connected business ecosystem.
+                Business software, cloud services and developer tools — built by
+                Foxses to work together, so your business runs from one connected
+                ecosystem.
               </p>
 
               <ul
@@ -145,7 +151,7 @@ export default function EcosystemSection() {
 
           {/* BOTTOM — capability strip, built into the section structure */}
           <div className="grid grid-cols-1 md:grid-cols-3 border-t border-zinc-200/70 dark:border-zinc-800/70 divide-y md:divide-y-0 md:divide-x divide-zinc-200/70 dark:divide-zinc-800/70">
-            {CAPABILITIES.map(({ icon: Icon, title, description }) => (
+            {CAPABILITIES.map(({ icon: Icon, title, description, items }) => (
               <div key={title} className="py-7 md:px-8 lg:px-10 xl:px-14 first:md:pl-0 lg:first:pl-10 xl:first:pl-14">
                 <h3 className="flex items-center gap-2.5 text-[16px] font-semibold uppercase tracking-[0.12em] text-zinc-900 dark:text-white">
                   <Icon className="h-4 w-4 text-[#f25b2a]" strokeWidth={1.75} aria-hidden="true" />
@@ -153,6 +159,9 @@ export default function EcosystemSection() {
                 </h3>
                 <p className="mt-2 max-w-[380px] text-[16px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
                   {description}
+                </p>
+                <p className="mt-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-200">
+                  {items}
                 </p>
               </div>
             ))}

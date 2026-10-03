@@ -13,12 +13,27 @@ export interface GlobeArc {
   to: string;
 }
 
-export const SARA_NODE_ID = "sara";
-export const DATA_NODE_ID = "flow";
+// Hub points that a few arcs converge on — data flowing into one shared platform
+export const HUB_NODE_IDS = ["hub", "n8", "n16"];
+
+export interface GlobeAnnotation {
+  node: string;
+  title: string;
+  detail: string;
+  /** Hidden on small screens to keep the globe uncluttered */
+  desktopOnly?: boolean;
+}
+
+// What Foxses builds — shown one or two at a time as the globe turns
+export const GLOBE_ANNOTATIONS: GlobeAnnotation[] = [
+  { node: "n3", title: "Business software", detail: "Invoice · Inventory · HR · Forms" },
+  { node: "n8", title: "Developer tools", detail: "Payments · APIs · SDKs", desktopOnly: true },
+  { node: "n17", title: "Cloud & infrastructure", detail: "Domains · Hosting · Cloud" },
+];
 
 export const GLOBE_NODES: GlobeNode[] = [
-  { id: SARA_NODE_ID, lng: 12, lat: 49 },
-  { id: DATA_NODE_ID, lng: -92, lat: 39 },
+  { id: "hub", lng: 12, lat: 49 },
+  { id: "flow", lng: -92, lat: 39 },
   { id: "n1", lng: -122, lat: 45 },
   { id: "n2", lng: -74, lat: 43 },
   { id: "n3", lng: -99, lat: 21 },
@@ -43,14 +58,14 @@ export const GLOBE_NODES: GlobeNode[] = [
   { id: "n22", lng: -150, lat: 62 },
 ];
 
-// Globe-to-globe connections (no hub-and-spoke). A few converge on Sara AI.
+// Globe-to-globe connections (no hub-and-spoke). A few converge on the hubs.
 export const GLOBE_ARCS: GlobeArc[] = [
-  { from: DATA_NODE_ID, to: "n2" },
+  { from: "flow", to: "n2" },
   { from: "n2", to: "n7" },
-  { from: "n7", to: SARA_NODE_ID },
-  { from: "n13", to: SARA_NODE_ID },
-  { from: "n10", to: SARA_NODE_ID },
-  { from: "n1", to: DATA_NODE_ID },
+  { from: "n7", to: "hub" },
+  { from: "n13", to: "hub" },
+  { from: "n10", to: "hub" },
+  { from: "n1", to: "flow" },
   { from: "n3", to: "n6" },
   { from: "n6", to: "n5" },
   { from: "n5", to: "n4" },

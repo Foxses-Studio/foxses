@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { LAND_DOTS } from "@/lib/globe-land-dots";
 import {
+  GLOBE_ANNOTATIONS,
   GLOBE_ARCS,
   GLOBE_NODES,
-  SARA_NODE_ID,
-  DATA_NODE_ID,
+  HUB_NODE_IDS,
 } from "./globe-data";
 
 /* ------------------------------------------------------------------ */
@@ -17,12 +16,12 @@ import {
 
 const DEG = Math.PI / 180;
 const ORANGE = "242, 91, 42";
-const AUTO_SPEED = 3.2 * DEG; // radians per second — one turn ≈ 2 minutes
+const AUTO_SPEED = 8 * DEG; // radians per second — one turn ≈ 45 seconds
+const MAX_FLING_SPEED = AUTO_SPEED * 4;
 const DEFAULT_TILT = 16 * DEG;
 const MIN_TILT = -8 * DEG;
 const MAX_TILT = 42 * DEG;
-const RESUME_DELAY_MS = 2000;
-const HOVER_SPEED_FACTOR = 0.3;
+const HOVER_SPEED_FACTOR = 0.45;
 const ARC_SAMPLES = 56;
 const INTRO_MS = 1000;
 
@@ -108,14 +107,13 @@ for (let lng = -180; lng < 180; lng += 20) {
 const NODE_INDEX: Record<string, number> = {};
 GLOBE_NODES.forEach((n, i) => (NODE_INDEX[n.id] = i));
 const NODE_VECS = GLOBE_NODES.map((n) => toVec(n.lng, n.lat));
-const SARA_INDEX = NODE_INDEX[SARA_NODE_ID];
-const DATA_INDEX = NODE_INDEX[DATA_NODE_ID];
+const ANNOTATION_NODES = GLOBE_ANNOTATIONS.map((a) => NODE_INDEX[a.node]);
 
 interface ArcGeometry {
   from: number;
   to: number;
   points: Float32Array;
-  toSara: boolean;
+  toHub: boolean;
 }
 
 // Great-circle arcs lifted off the surface so they read as travelling over the globe
@@ -140,7 +138,7 @@ const ARCS: ArcGeometry[] = GLOBE_ARCS.map(({ from, to }) => {
     from: NODE_INDEX[from],
     to: NODE_INDEX[to],
     points,
-    toSara: to === SARA_NODE_ID || from === SARA_NODE_ID,
+    toHub: HUB_NODE_IDS.includes(to) || HUB_NODE_IDS.includes(from),
   };
 });
 
@@ -168,8 +166,7 @@ interface ArcSlot {
 export default function EcosystemGlobe() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const saraLabelRef = useRef<HTMLDivElement>(null);
-  const dataLabelRef = useRef<HTMLDivElement>(null);
+  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const paletteRef = useRef<Palette>(LIGHT);
   const requestDrawRef = useRef<() => void>(() => {});
 
@@ -206,7 +203,8 @@ export default function EcosystemGlobe() {
     let dragging = false;
     let lastX = 0;
     let lastY = 0;
-    let lastInteraction = -Infinity;
+    let dragVelocity = 0; // radians per second, smoothed
+    let lastMoveTime = 0;
     let pointer: { x: number; y: number } | null = null;
     let hoverNode = -1;
 
@@ -269,7 +267,7 @@ export default function EcosystemGlobe() {
         const m = (ARC_SAMPLES / 2) * 3;
         const p = project(arc.points[m], arc.points[m + 1], arc.points[m + 2]);
         const front = p.z > 0.15 ? 1 : 0.03;
-        const w = front * (arc.toSara ? 1.7 : 1);
+        const w = front * (arc.toHub ? 1.5 : 1);
         total += w;
         return w;
       });
@@ -320,13 +318,15 @@ export default function EcosystemGlobe() {
           : clamp01((now - introStart) / INTRO_MS);
       const nodesIn = smooth(0.3, 0.7, intro);
 
-      // Rotation: pause on interaction, resume gently after a short delay
-      const idle = !dragging && now - lastInteraction > RESUME_DELAY_MS;
-      let target = reduced || !idle || intro < 0.6 ? 0 : AUTO_SPEED;
-      if (hoverNode >= 0) target *= HOVER_SPEED_FACTOR;
-      speed += (target - speed) * Math.min(1, dt * 1.2);
-      lambda += speed * dt;
-      if (idle && !reduced) tilt += (DEFAULT_TILT - tilt) * Math.min(1, dt * 0.6);
+      // Rotation: the drag drives the globe directly; on release it keeps the
+      // hand's momentum and eases back to the calm auto-rotation (never stalls)
+      if (!dragging) {
+        let target = reduced || intro < 0.6 ? 0 : AUTO_SPEED;
+        if (hoverNode >= 0) target *= HOVER_SPEED_FACTOR;
+        speed += (target - speed) * Math.min(1, dt * 1.6);
+        lambda += speed * dt;
+        if (!reduced) tilt += (DEFAULT_TILT - tilt) * Math.min(1, dt * 0.8);
+      }
 
       cl = Math.cos(lambda);
       sl = Math.sin(lambda);
@@ -500,7 +500,6 @@ export default function EcosystemGlobe() {
         }
       }
 
-      activity[SARA_INDEX] = Math.max(activity[SARA_INDEX], 0.75);
 
       // Nodes + hover hit-test
       let nextHover = -1;
@@ -515,7 +514,7 @@ export default function EcosystemGlobe() {
         const hovered = i === hoverNode;
         const r = (2.1 + act * 0.8 + (hovered ? 1.4 : 0)) * scale;
 
-        if (pointer && !dragging) {
+        if (pointer && !dragging && speed < AUTO_SPEED * 1.5) {
           const dx = pointer.x - p.x;
           const dy = pointer.y - p.y;
           const dist = dx * dx + dy * dy;
@@ -580,8 +579,9 @@ export default function EcosystemGlobe() {
         lx = Math.max(visibleLeft, Math.min(visibleRight - w, lx));
         el.style.transform = `translate3d(${lx}px, ${ay - el.offsetHeight / 2}px, 0)`;
       };
-      placeLabel(saraLabelRef.current, SARA_INDEX, true);
-      placeLabel(dataLabelRef.current, DATA_INDEX, !isMobile);
+      GLOBE_ANNOTATIONS.forEach((a, i) =>
+        placeLabel(labelRefs.current[i], ANNOTATION_NODES[i], !(isMobile && a.desktopOnly))
+      );
 
       if (reduced || !isVisible) rafId = 0;
       else rafId = requestAnimationFrame(draw);
@@ -602,7 +602,9 @@ export default function EcosystemGlobe() {
       dragging = true;
       lastX = e.clientX;
       lastY = e.clientY;
-      lastInteraction = performance.now();
+      dragVelocity = 0;
+      lastMoveTime = performance.now();
+      hoverNode = -1;
       canvas.setPointerCapture(e.pointerId);
       canvas.style.cursor = "grabbing";
     };
@@ -612,9 +614,14 @@ export default function EcosystemGlobe() {
         const dy = e.clientY - lastY;
         lastX = e.clientX;
         lastY = e.clientY;
-        lambda += (dx / R) * 0.9;
+        const t = performance.now();
+        const step = (dx / R) * 0.9;
+        lambda += step;
         tilt = Math.max(MIN_TILT, Math.min(MAX_TILT, tilt + (dy / R) * 0.6));
-        lastInteraction = performance.now();
+        const elapsed = Math.max(8, t - lastMoveTime) / 1000;
+        dragVelocity = dragVelocity * 0.6 + (step / elapsed) * 0.4;
+        lastMoveTime = t;
+        pointer = localPoint(e);
         requestDraw();
       } else if (e.pointerType === "mouse") {
         pointer = localPoint(e);
@@ -624,7 +631,12 @@ export default function EcosystemGlobe() {
     const onUp = (e: PointerEvent) => {
       if (!dragging) return;
       dragging = false;
-      lastInteraction = performance.now();
+      // A pause before letting go means no fling; otherwise keep a gentle momentum
+      const held = performance.now() - lastMoveTime > 120;
+      speed = held
+        ? 0
+        : Math.max(-MAX_FLING_SPEED, Math.min(MAX_FLING_SPEED, dragVelocity));
+      requestDraw();
       if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
       canvas.style.cursor = "grab";
     };
@@ -695,50 +707,24 @@ export default function EcosystemGlobe() {
       />
 
       {/* Minimal annotations (positioned every frame by the canvas loop) */}
-      <div
-        ref={saraLabelRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 opacity-0 whitespace-nowrap rounded-[4px] bg-white/85 dark:bg-zinc-950/85 px-1.5 py-1"
-      >
-        <span className="flex items-center gap-2 text-[16px] font-semibold text-zinc-900 dark:text-white leading-tight">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#f25b2a]" />
-          Sara AI
-        </span>
-        <span className="block pl-3.5 text-[16px] text-zinc-500 dark:text-zinc-400 leading-tight">
-          AI across your business
-        </span>
-      </div>
-
-      <div
-        ref={dataLabelRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 opacity-0 whitespace-nowrap rounded-[4px] bg-white/85 dark:bg-zinc-950/85 px-1.5 py-1"
-      >
-        <span className="flex items-center gap-2 text-[16px] font-semibold text-zinc-900 dark:text-white leading-tight">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#f25b2a]" />
-          Real-time data
-        </span>
-        <span className="block pl-3.5 text-[16px] text-zinc-500 dark:text-zinc-400 leading-tight">
-          Connected workflows
-        </span>
-      </div>
-
-      {/* Subtle Foxses presence */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-[3%] left-1/2 -translate-x-1/2 sm:bottom-[9%] sm:left-auto sm:right-[6%] sm:translate-x-0 flex items-center gap-2"
-      >
-        <Image
-          src="/all-logo/foxses_logo.png"
-          alt=""
-          width={20}
-          height={20}
-          className="h-5 w-5 object-contain"
-        />
-        <span className="text-[16px] font-medium text-zinc-500 dark:text-zinc-400">
-          Foxses Network
-        </span>
-      </div>
+      {GLOBE_ANNOTATIONS.map((a, i) => (
+        <div
+          key={a.node}
+          ref={(el) => {
+            labelRefs.current[i] = el;
+          }}
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 opacity-0 whitespace-nowrap rounded-[4px] bg-white/85 dark:bg-zinc-950/85 px-1.5 py-1"
+        >
+          <span className="flex items-center gap-2 text-[16px] font-semibold text-zinc-900 dark:text-white leading-tight">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#f25b2a]" />
+            {a.title}
+          </span>
+          <span className="block pl-3.5 text-[16px] text-zinc-500 dark:text-zinc-400 leading-tight">
+            {a.detail}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
