@@ -6,6 +6,16 @@ import TrustedBy from "@/components/TrustedBy";
 import EcosystemSection from "@/components/EcosystemSection";
 import ProductShowcase from "@/components/products/ProductShowcase";
 import WorkflowSection from "@/components/workflow/WorkflowSection";
+import TeamsSection from "@/components/home/TeamsSection";
+import WhySection from "@/components/home/WhySection";
+import TourSection from "@/components/home/TourSection";
+import IntegrationsSection from "@/components/home/IntegrationsSection";
+import SecuritySection from "@/components/home/SecuritySection";
+import StoriesSection from "@/components/home/StoriesSection";
+import PricingSection from "@/components/home/PricingSection";
+import ResourcesSection from "@/components/home/ResourcesSection";
+import FinalCtaSection from "@/components/home/FinalCtaSection";
+import SiteFooter from "@/components/home/SiteFooter";
 
 export default function Home() {
   // নেভিগেশন মেনু আইটেমসমূহ
@@ -32,7 +42,17 @@ export default function Home() {
         <EcosystemSection />
         <ProductShowcase />
         <WorkflowSection />
+        <TeamsSection />
+        <WhySection />
+        <TourSection />
+        <IntegrationsSection />
+        <SecuritySection />
+        <StoriesSection />
+        <PricingSection />
+        <ResourcesSection />
+        <FinalCtaSection />
       </main>
+      <SiteFooter />
     </div>
   );
 }
