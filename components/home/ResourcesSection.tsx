@@ -123,13 +123,13 @@ export default function ResourcesSection() {
               </li>
             ))}
             {planned.map((p, i) => (
-              <li key={p.type} data-reveal className={`flex items-start gap-4 py-6 ${i === 0 && published.length === 0 ? "lg:pt-0" : ""} border-b border-zinc-200 dark:border-zinc-800`}>
+              <li key={p.type} data-reveal className={`flex flex-wrap items-start gap-x-4 gap-y-2 py-6 ${i === 0 && published.length === 0 ? "lg:pt-0" : ""} border-b border-zinc-200 dark:border-zinc-800`}>
                 <span className="tabular-nums text-[16px] text-zinc-300 dark:text-zinc-600">{String(i + 1).padStart(2, "0")}</span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-xl font-semibold">{TYPE_LABEL[p.type]}</span>
                   <span className="mt-1 block text-[16px] text-zinc-600 dark:text-zinc-400">{p.line}</span>
                 </span>
-                <span className="shrink-0 rounded-[4px] border border-zinc-200 px-2 py-0.5 text-[16px] text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
+                <span className="shrink-0 rounded-[4px] border border-zinc-200 px-2 py-0.5 text-[16px] text-zinc-500 dark:border-zinc-700 dark:text-zinc-400 max-sm:ml-9">
                   Coming soon
                 </span>
               </li>

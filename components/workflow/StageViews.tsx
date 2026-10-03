@@ -69,13 +69,13 @@ function CustomerView() {
     <>
       <Header title="New customer activity" meta="Today · 09:41" badge={<Badge tone="warning">New order</Badge>} />
       <div className="flex items-center gap-3 px-5 pt-5 sm:px-6">
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#fde3d7] text-[16px] font-semibold text-[#b8441d] dark:bg-[#f25b2a]/20 dark:text-[#ff9b73]">
+        <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fde3d7] text-[16px] font-semibold text-[#b8441d] dark:bg-[#f25b2a]/20 dark:text-[#ff9b73]">
           AM
         </span>
-        <div>
+        <div className="min-w-0">
           <p className="text-[16px] font-semibold text-zinc-900 dark:text-white">{STORY.customer}</p>
-          <p className="flex items-center gap-1.5 text-[16px] text-zinc-500 dark:text-zinc-400">
-            <Mail className="h-4 w-4" aria-hidden="true" /> {STORY.email}
+          <p className="flex min-w-0 items-center gap-1.5 text-[16px] text-zinc-500 dark:text-zinc-400">
+            <Mail className="h-4 w-4 shrink-0" aria-hidden="true" /> <span className="truncate">{STORY.email}</span>
           </p>
         </div>
       </div>
@@ -178,7 +178,7 @@ function PaymentView() {
         <span className="text-[16px] text-zinc-500 dark:text-zinc-400">Amount</span>
         <span className="text-[28px] font-semibold tabular-nums text-zinc-900 dark:text-white">{STORY.amount}</span>
       </div>
-      <ol className="flex items-center gap-2 px-5 py-6 sm:px-6">
+      <ol className="flex flex-col gap-3 px-5 py-6 sm:flex-row sm:items-center sm:gap-2 sm:px-6">
         {steps.map(([label, time], i) => (
           <li key={label} className="flex flex-1 items-center gap-2">
             <span

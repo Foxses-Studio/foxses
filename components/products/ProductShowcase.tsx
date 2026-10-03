@@ -203,11 +203,11 @@ export default function ProductShowcase() {
           </div>
 
           {/* CATEGORY TABS */}
-          <div className={`mt-10 sm:mt-12 -mx-4 px-4 overflow-x-auto no-scrollbar ${reveal("delay-300")}`}>
+          <div className={`mt-10 sm:mt-12 ${reveal("delay-300")}`}>
             <div
               role="tablist"
               aria-label="Product categories"
-              className="mx-auto flex w-max gap-1 rounded-[8px] border border-zinc-200 bg-white p-1 dark:border-zinc-800 dark:bg-zinc-900"
+              className="mx-auto flex max-w-full flex-wrap justify-center gap-2 lg:w-max lg:flex-nowrap lg:gap-1 lg:rounded-[8px] lg:border lg:border-zinc-200 lg:bg-white lg:p-1 dark:lg:border-zinc-800 dark:lg:bg-zinc-900"
             >
               {CATEGORIES.map((c, i) => {
                 const active = c.id === category;
@@ -228,7 +228,7 @@ export default function ProductShowcase() {
                     className={`h-10 whitespace-nowrap rounded-[6px] border px-4 text-[16px] transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a] ${
                       active
                         ? "border-[#f25b2a]/30 bg-[#fff6f0] font-medium text-zinc-900 dark:bg-[#f25b2a]/10 dark:text-white"
-                        : "border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+                        : "border-zinc-200 bg-white text-zinc-500 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:text-white lg:border-transparent lg:bg-transparent dark:lg:bg-transparent"
                     }`}
                   >
                     {c.label}
@@ -259,7 +259,7 @@ export default function ProductShowcase() {
                 <div
                   role="group"
                   aria-label="Choose a product"
-                  className="mb-8 -mx-1 flex gap-x-4 overflow-x-auto no-scrollbar border-b border-zinc-100 px-1 dark:border-zinc-800"
+                  className="mb-8 flex flex-wrap gap-x-4 gap-y-1 border-b border-zinc-100 dark:border-zinc-800"
                 >
                   {categoryProducts.map((p) => {
                     const active = p.id === selected;

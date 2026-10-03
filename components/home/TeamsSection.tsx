@@ -290,7 +290,7 @@ export default function TeamsSection() {
           aria-orientation="vertical"
           onKeyDown={tabKeyHandler(ROLES.length, selected, select)}
           data-reveal
-          className="-mx-4 flex gap-1 overflow-x-auto no-scrollbar px-4 lg:mx-0 lg:block lg:overflow-visible lg:border-t lg:border-zinc-200 lg:px-0 lg:pr-10 dark:lg:border-zinc-800"
+          className="flex flex-wrap gap-2 lg:block lg:border-t lg:border-zinc-200 lg:px-0 lg:pr-10 dark:lg:border-zinc-800"
         >
           {ROLES.map((r, i) => {
             const active = i === selected;
@@ -308,7 +308,7 @@ export default function TeamsSection() {
                   px-3.5 py-2 lg:w-full lg:rounded-none lg:border-b lg:border-zinc-200 lg:px-0 lg:py-5 dark:lg:border-zinc-800
                   ${active
                     ? "bg-white text-zinc-900 ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-white dark:ring-zinc-800 lg:bg-transparent lg:ring-0 dark:lg:bg-transparent"
-                    : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"}`}
+                    : "text-zinc-500 ring-1 ring-zinc-200 hover:text-zinc-900 dark:text-zinc-400 dark:ring-zinc-800 dark:hover:text-white lg:ring-0"}`}
               >
                 <span
                   aria-hidden="true"

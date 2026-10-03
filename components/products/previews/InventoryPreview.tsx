@@ -116,18 +116,7 @@ export default function InventoryPreview({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {compact ? (
-        <Card title="Recent activity" className="mt-3">
-          <ul className="space-y-2.5 px-4 py-3">
-            {ACTIVITY.slice(0, 3).map((a) => (
-              <li key={a.text} className="leading-snug">
-                <span className="block font-medium">{a.text}</span>
-                <span className="text-zinc-500 dark:text-zinc-400">{a.meta}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ) : (
+      {compact ? null : (
         <Card className="mt-3" title="Inventory" aside={<Boxes className="h-4 w-4" />}>
           <table className="w-full text-left">
             <thead className="text-zinc-500 dark:text-zinc-400">

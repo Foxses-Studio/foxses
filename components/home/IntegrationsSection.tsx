@@ -100,12 +100,13 @@ export default function IntegrationsSection() {
 
           <ul className="mt-10 border-t border-zinc-200 dark:border-zinc-800">
             {CAPABILITIES.map(({ icon: Icon, title, line, status, href }) => (
-              <li key={title} data-reveal className="flex items-start gap-4 border-b border-zinc-200 py-4 dark:border-zinc-800">
+              <li key={title} data-reveal className="flex flex-wrap items-start gap-x-4 gap-y-2 border-b border-zinc-200 py-4 dark:border-zinc-800">
                 <Icon className="mt-1 h-4 w-4 shrink-0 text-[#f25b2a]" strokeWidth={1.75} aria-hidden="true" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[16px] font-semibold">{title}</p>
                   <p className="text-[16px] text-zinc-600 dark:text-zinc-400">{line}</p>
                 </div>
+                <span className="flex items-center gap-4 max-sm:basis-full max-sm:pl-8">
                 <StatusMark status={status} />
                 {href && (
                   <a
@@ -118,6 +119,7 @@ export default function IntegrationsSection() {
                     npm ↗
                   </a>
                 )}
+                </span>
               </li>
             ))}
           </ul>

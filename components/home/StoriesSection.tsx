@@ -76,7 +76,7 @@ const STORIES: Story[] = [
 ];
 
 function FragmentCard({ f }: { f: Fragment }) {
-  const base = "w-[290px] max-w-full rounded-[8px] border border-zinc-200 bg-white px-4 py-3 text-[16px] text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white";
+  const base = "w-full sm:w-[290px] max-w-full rounded-[8px] border border-zinc-200 bg-white px-4 py-3 text-[16px] text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-white";
   switch (f.kind) {
     case "stock":
       return (
@@ -128,12 +128,12 @@ function FragmentCard({ f }: { f: Fragment }) {
 
 /** Three layered fragments of one business — a static composition, not a workflow */
 function StoryVisual({ story }: { story: Story }) {
-  const positions = ["left-[6%] top-[10%]", "right-[6%] top-[38%]", "left-[14%] bottom-[10%]"];
+  const positions = ["sm:left-[6%] sm:top-[10%]", "sm:right-[6%] sm:top-[38%]", "sm:left-[14%] sm:bottom-[10%]"];
   return (
-    <div aria-hidden="true" className="relative h-full min-h-[250px] overflow-hidden bg-[#fafaf8] dark:bg-zinc-900/40 sm:min-h-[440px]">
+    <div aria-hidden="true" className="relative flex h-full flex-col gap-3 overflow-hidden bg-[#fafaf8] p-5 dark:bg-zinc-900/40 sm:block sm:min-h-[440px] sm:p-0">
       <div className="absolute inset-0 bg-[radial-gradient(rgba(24,24,27,0.06)_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)] dark:bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)]" />
       {story.fragments.map((f, i) => (
-        <div key={i} className={`absolute ${positions[i]} ${i === 2 ? "max-sm:hidden" : ""}`}>
+        <div key={i} className={`relative sm:absolute ${positions[i]}`}>
           <FragmentCard f={f} />
         </div>
       ))}
@@ -219,7 +219,7 @@ export default function StoriesSection() {
         aria-label="Business scenarios"
         onKeyDown={tabKeyHandler(STORIES.length, selected, select, "horizontal")}
         data-reveal
-        className="-mx-4 flex overflow-x-auto no-scrollbar px-4 md:mx-0 md:grid md:grid-cols-3 md:px-0"
+        className="grid grid-cols-3"
       >
         {STORIES.map((s, i) => {
           const active = i === selected;
@@ -233,7 +233,7 @@ export default function StoriesSection() {
               aria-controls="story-panel"
               tabIndex={active ? 0 : -1}
               onClick={() => select(i)}
-              className="group relative shrink-0 border-t-2 border-transparent pr-8 pt-5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]"
+              className="group relative border-t-2 border-transparent pr-3 pt-5 text-left sm:pr-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]"
             >
               {active && (
                 <span className="absolute -top-[2px] inset-x-0 h-[2px] overflow-hidden">
@@ -241,7 +241,7 @@ export default function StoriesSection() {
                 </span>
               )}
               <span className={`block tabular-nums text-[16px] ${active ? "text-[#f25b2a]" : "text-zinc-400"}`}>{String(i + 1).padStart(2, "0")}</span>
-              <span className={`mt-1 block whitespace-nowrap text-[16px] uppercase tracking-[0.12em] ${active ? "font-semibold text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-white"}`}>
+              <span className={`mt-1 block text-[16px] uppercase tracking-[0.12em] max-sm:tracking-[0.06em] ${active ? "font-semibold text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-white"}`}>
                 {s.category}
               </span>
             </button>

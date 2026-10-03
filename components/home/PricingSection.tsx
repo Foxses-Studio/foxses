@@ -69,7 +69,7 @@ export default function PricingSection() {
           <li
             key={s.label}
             data-price-stage
-            className={`relative flex flex-col gap-6 py-10 md:px-8 lg:px-10 ${i > 0 ? "border-t border-zinc-200 dark:border-zinc-800 md:border-l md:border-t-0" : "md:pl-0"}`}
+            className={`relative flex flex-col gap-5 py-8 sm:py-10 md:px-8 lg:px-10 ${i > 0 ? "border-t border-zinc-200 dark:border-zinc-800 md:border-l md:border-t-0" : "md:pl-0"}`}
           >
             {i < STAGES.length - 1 && (
               <span aria-hidden="true" className="absolute -right-3 top-1/2 z-10 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-200 bg-[#fafaf8] text-[#f25b2a] dark:border-zinc-800 dark:bg-[#0c0c0e] md:flex">
@@ -83,7 +83,7 @@ export default function PricingSection() {
               </p>
               <p className="mt-2 text-[16px] text-zinc-600 dark:text-zinc-400">{s.line}</p>
             </div>
-            <div className="mt-auto flex min-h-[92px] flex-wrap content-end gap-2" aria-label={`Example setup: ${s.products.map((p) => PRODUCT_META[p].short).join(", ")}`}>
+            <div className="mt-auto flex flex-wrap content-end gap-2 sm:min-h-[92px]" aria-label={`Example setup: ${s.products.map((p) => PRODUCT_META[p].short).join(", ")}`}>
               {s.products.map((p) => (
                 <Chip key={p} product={p} />
               ))}

@@ -196,11 +196,11 @@ export default function WorkflowSection() {
                 role="group"
                 aria-label="Workflow stages"
                 onKeyDown={onStepKeyDown}
-                className="relative -mx-2 overflow-x-auto no-scrollbar px-2 sm:mx-0 sm:overflow-visible sm:px-0"
+                className="relative"
               >
-                <div className="relative grid min-w-[640px] grid-cols-6 sm:min-w-0">
+                <div className="relative grid grid-cols-3 gap-y-5 sm:grid-cols-6 sm:gap-y-0">
                   {/* One connection path: neutral track, orange progress, travelling pulse */}
-                  <div aria-hidden="true" className="pointer-events-none absolute left-[8.333%] right-[8.333%] top-[18px]">
+                  <div aria-hidden="true" className="pointer-events-none absolute left-[8.333%] right-[8.333%] top-[18px] max-sm:hidden">
                     <div
                       className={`h-px origin-left bg-white/15 transition-transform duration-1000 ease-out motion-reduce:transition-none ${
                         isVisible ? "scale-x-100" : "scale-x-0 motion-reduce:scale-x-100"

@@ -155,7 +155,7 @@ export default function SecuritySection() {
 
         {/* Trust layers */}
         <div data-trust data-reveal="soft" className="relative" aria-label="Layers of the Foxses workspace" role="group">
-          <div className="relative mx-auto aspect-[5/4] w-full max-w-[680px] sm:aspect-[16/11]">
+          <div className="relative mx-auto aspect-square w-full max-w-[680px] sm:aspect-[16/11]">
             {/* incoming users */}
             <div className="absolute inset-y-0 left-0 hidden w-[16%] flex-col justify-center gap-6 sm:flex" aria-hidden="true">
               {["User", "Team", "Workspace"].map((u, i) => (
@@ -183,7 +183,7 @@ export default function SecuritySection() {
                         <div className="absolute inset-[14%] top-[22%]">
                           <div data-trust-layer className={`relative flex h-full w-full items-center justify-center rounded-[8px] border bg-[radial-gradient(circle_at_50%_55%,rgba(242,91,42,0.10),transparent_65%)] ${layerClass(inner.id)}`}>
                             <LayerLabel layer={inner} hovered={hovered} setHovered={setHovered} />
-                            <div data-trust-core className="relative mt-6 flex flex-col items-center gap-2">
+                            <div data-trust-core className="relative mt-10 flex flex-col items-center gap-2 sm:mt-6">
                               <span className="relative flex h-14 w-14 items-center justify-center rounded-full border border-[#f25b2a]/40 bg-[#111113] dark:bg-[#09090b]">
                                 <span data-trust-core-ring aria-hidden="true" className="absolute inset-0 rounded-full border border-[#f25b2a]/60 opacity-0" />
                                 <Image src="/all-logo/foxses_logo.png" alt="" width={28} height={30} className="h-7 w-auto" />

@@ -301,7 +301,7 @@ export default function TourSection() {
       {/* Tour steps */}
       <div className="mx-auto mt-14 max-w-[760px] lg:mt-16" data-reveal>
         <div className="relative">
-          <div aria-hidden="true" className="absolute left-[12.5%] right-[12.5%] top-[7px] h-px bg-zinc-200 dark:bg-zinc-800">
+          <div aria-hidden="true" className="absolute left-[12.5%] right-[12.5%] top-[7px] h-px bg-zinc-200 dark:bg-zinc-800 max-sm:hidden">
             <span
               className="absolute inset-y-0 left-0 bg-[#f25b2a] transition-[width] duration-500 ease-out motion-reduce:transition-none"
               style={{ width: `${progress * 100}%` }}
@@ -311,7 +311,7 @@ export default function TourSection() {
             role="tablist"
             aria-label="Tour steps"
             onKeyDown={tabKeyHandler(STEPS.length, selected, choose, "horizontal")}
-            className="relative grid grid-cols-4"
+            className="relative grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-0"
           >
             {STEPS.map((s, i) => {
               const active = i === selected;
@@ -325,9 +325,9 @@ export default function TourSection() {
                   aria-controls="tour-panel"
                   tabIndex={active ? 0 : -1}
                   onClick={() => choose(i)}
-                  className="group flex flex-col items-center gap-3 rounded-[6px] pb-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]"
+                  className={`group flex flex-col items-center gap-3 rounded-[6px] pb-1 max-sm:gap-1.5 max-sm:pt-2.5 max-sm:ring-1 ${active ? "max-sm:bg-white max-sm:ring-[#f25b2a]/40 dark:max-sm:bg-zinc-900" : "max-sm:ring-zinc-200 dark:max-sm:ring-zinc-800"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]`}
                 >
-                  <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+                  <span className="relative flex h-3.5 w-3.5 items-center justify-center max-sm:hidden">
                     <span
                       className={`relative h-3.5 w-3.5 rounded-full border-2 transition-colors ${
                         i <= selected ? "border-[#f25b2a] bg-[#f25b2a]" : "border-zinc-300 bg-[#fafaf8] dark:border-zinc-700 dark:bg-[#0c0c0e]"
