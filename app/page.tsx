@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import TrustedBy from "@/components/TrustedBy";
 import EcosystemSection from "@/components/EcosystemSection";
 import ProductShowcase from "@/components/products/ProductShowcase";
+import WorkflowSection from "@/components/workflow/WorkflowSection";
 
 export default function Home() {
   // নেভিগেশন মেনু আইটেমসমূহ
@@ -30,6 +31,7 @@ export default function Home() {
         <TrustedBy />
         <EcosystemSection />
         <ProductShowcase />
+        <WorkflowSection />
       </main>
     </div>
   );
