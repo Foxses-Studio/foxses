@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Cable, CreditCard, HardDrive, MessageSquare, Store, Webhook } from "lucide-react";
 import { Eyebrow, Heading, Lede, Section } from "./shared";
 import { EASE, gsap, MQ, revealOnScroll, useGsap } from "@/lib/motion";
+import { AutoProgress, useAutoplayPause } from "./AutoProgress";
 
 // Section 9 — Foxses connecting outward.
 // Only Foxses Pay is live today (public npm package). Everything else is a
@@ -53,12 +54,21 @@ export default function IntegrationsSection() {
   const ref = useRef<HTMLElement>(null);
   const [active, setActive] = useState<string>("payments");
   const current = ENDPOINTS.find((e) => e.id === active) ?? ENDPOINTS[0];
+  const hubRef = useRef<HTMLDivElement>(null);
+  const { paused, hoverProps } = useAutoplayPause(hubRef);
+  const nextEndpoint = () => {
+    const i = ENDPOINTS.findIndex((e) => e.id === active);
+    setActive(ENDPOINTS[(i + 1) % ENDPOINTS.length].id);
+  };
+  const timer = (
+    <AutoProgress cycleKey={active} duration={4500} paused={paused} onDone={nextEndpoint} className="h-full w-full" />
+  );
 
   useGsap(ref, (mm, el) => {
     revealOnScroll(el);
     mm.add(MQ.motion, () => {
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: "[data-hub]", start: "top 75%", once: true },
+        scrollTrigger: { trigger: "[data-hub]", start: "top 75%", toggleActions: "play none none none" },
         defaults: { ease: EASE },
       });
       tl.from("[data-hub-module]", { autoAlpha: 0, scale: 0.97, duration: 0.6 })
@@ -114,7 +124,7 @@ export default function IntegrationsSection() {
         </div>
 
         {/* Connection hub — desktop & tablet */}
-        <div data-hub data-reveal="soft" className="relative">
+        <div ref={hubRef} {...hoverProps} data-hub data-reveal="soft" className="relative">
           <div className="relative hidden h-[460px] sm:block">
             <svg aria-hidden="true" className="absolute inset-0 h-full w-full" viewBox="0 0 760 460" preserveAspectRatio="none">
               {ENDPOINTS.map((e) => {
@@ -211,6 +221,7 @@ export default function IntegrationsSection() {
                 </div>
                 <p className="mt-1 text-[16px] leading-snug text-zinc-600 dark:text-zinc-400">{current.detail}</p>
               </div>
+              <span className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden rounded-b-[8px]">{timer}</span>
             </div>
           </div>
 
@@ -238,6 +249,7 @@ export default function IntegrationsSection() {
                       <StatusMark status={e.status} />
                     </button>
                     {on && <p className="fx-enter px-4 pb-3 pl-11 text-[16px] text-zinc-600 dark:text-zinc-400">{e.detail}</p>}
+                    {on && <span className="block h-[2px] overflow-hidden">{timer}</span>}
                   </li>
                 );
               })}

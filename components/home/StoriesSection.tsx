@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { Eyebrow, Heading, ProductTag, Section, tabKeyHandler, useSwap, type ProductKey } from "./shared";
 import { Badge } from "./ui-kit";
 import { revealOnScroll, useGsap } from "@/lib/motion";
+import { AutoProgress, useAutoplayPause } from "./AutoProgress";
 
 // Section 11 — business stories.
 // There are no verified customer stories yet, so every entry is a
@@ -142,7 +143,9 @@ function StoryVisual({ story }: { story: Story }) {
 
 export default function StoriesSection() {
   const ref = useRef<HTMLElement>(null);
+  const areaRef = useRef<HTMLDivElement>(null);
   const { selected, shown, leaving, select } = useSwap(0, 170);
+  const { paused, hoverProps } = useAutoplayPause(areaRef);
   const story = STORIES[shown];
   const isCustomer = story.type === "customer";
 
@@ -158,6 +161,7 @@ export default function StoriesSection() {
         <Heading id="stories-heading" lead="However you work," accent="keep it connected." />
       </div>
 
+      <div ref={areaRef} {...hoverProps}>
       <div
         id="story-panel"
         role="tabpanel"
@@ -231,7 +235,11 @@ export default function StoriesSection() {
               onClick={() => select(i)}
               className="group relative shrink-0 border-t-2 border-transparent pr-8 pt-5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]"
             >
-              <span aria-hidden="true" className={`absolute -top-[2px] left-0 h-[2px] bg-[#f25b2a] transition-all duration-500 ${active ? "w-full" : "w-0"}`} />
+              {active && (
+                <span className="absolute -top-[2px] inset-x-0 h-[2px] overflow-hidden">
+                  <AutoProgress cycleKey={selected} duration={8000} paused={paused} onDone={() => select((selected + 1) % STORIES.length)} className="h-full w-full" />
+                </span>
+              )}
               <span className={`block tabular-nums text-[16px] ${active ? "text-[#f25b2a]" : "text-zinc-400"}`}>{String(i + 1).padStart(2, "0")}</span>
               <span className={`mt-1 block whitespace-nowrap text-[16px] uppercase tracking-[0.12em] ${active ? "font-semibold text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-white"}`}>
                 {s.category}
@@ -239,6 +247,7 @@ export default function StoriesSection() {
             </button>
           );
         })}
+      </div>
       </div>
     </Section>
   );

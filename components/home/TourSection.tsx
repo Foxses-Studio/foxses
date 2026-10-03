@@ -6,6 +6,7 @@ import { Bell, LayoutDashboard, LayoutGrid, Search, Settings } from "lucide-reac
 import { Eyebrow, Heading, PRODUCT_META, PRODUCT_ORDER, Section, tabKeyHandler, useSwap, type ProductKey } from "./shared";
 import { Badge, Initials, Metric, Panel, Row, Rows } from "./ui-kit";
 import { EASE, gsap, MQ, revealOnScroll, useGsap } from "@/lib/motion";
+import { AutoProgress, useAutoplayPause } from "./AutoProgress";
 
 // Section 8 — a guided look inside a Foxses workspace *concept*.
 // The shell stays put; only the main content changes between steps.
@@ -240,37 +241,17 @@ export default function TourSection() {
   const { selected, shown, leaving, select } = useSwap(0, 160);
   const [openSpot, setOpenSpot] = useState<number | null>(null);
   const [launcherOpen, setLauncherOpen] = useState(false);
-  const [touched, setTouched] = useState(false);
-  const [hint, setHint] = useState(false);
+  const areaRef = useRef<HTMLDivElement>(null);
+  const { paused: autoPaused, hoverProps } = useAutoplayPause(areaRef);
+  const paused = autoPaused || openSpot !== null || launcherOpen;
 
   const step = STEPS[shown];
   const Content = CONTENT[step.id];
 
   const choose = (i: number) => {
-    setTouched(true);
-    setHint(false);
     setOpenSpot(null);
     select(i);
   };
-
-  // No autoplay: after a while, gently suggest the next step — once
-  useEffect(() => {
-    if (touched) return;
-    const el = ref.current;
-    if (!el) return;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        timer = setTimeout(() => setHint(true), 4500);
-        io.disconnect();
-      }
-    }, { threshold: 0.4 });
-    io.observe(el);
-    return () => {
-      io.disconnect();
-      if (timer) clearTimeout(timer);
-    };
-  }, [touched]);
 
   // Click outside closes annotations and the launcher
   useEffect(() => {
@@ -293,7 +274,7 @@ export default function TourSection() {
         y: 16,
         duration: 0.9,
         ease: EASE,
-        scrollTrigger: { trigger: "[data-tour-window]", start: "top 85%", once: true },
+        scrollTrigger: { trigger: "[data-tour-window]", start: "top 85%", toggleActions: "play none none none" },
       });
     });
     mm.add(MQ.desktop, () => {
@@ -316,6 +297,7 @@ export default function TourSection() {
         <Heading id="tour-heading" lead="See how Foxses" accent="comes together." />
       </div>
 
+      <div ref={areaRef} {...hoverProps}>
       {/* Tour steps */}
       <div className="mx-auto mt-14 max-w-[760px] lg:mt-16" data-reveal>
         <div className="relative">
@@ -346,9 +328,6 @@ export default function TourSection() {
                   className="group flex flex-col items-center gap-3 rounded-[6px] pb-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]"
                 >
                   <span className="relative flex h-3.5 w-3.5 items-center justify-center">
-                    {hint && i === 1 && (
-                      <span aria-hidden="true" className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f25b2a] opacity-40 [animation-iteration-count:3]" />
-                    )}
                     <span
                       className={`relative h-3.5 w-3.5 rounded-full border-2 transition-colors ${
                         i <= selected ? "border-[#f25b2a] bg-[#f25b2a]" : "border-zinc-300 bg-[#fafaf8] dark:border-zinc-700 dark:bg-[#0c0c0e]"
@@ -362,6 +341,11 @@ export default function TourSection() {
                     <span className={active ? "font-semibold text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-white"}>
                       {s.label}
                     </span>
+                  </span>
+                  <span className="h-[2px] w-12 overflow-hidden rounded-full bg-zinc-200/0">
+                    {active && (
+                      <AutoProgress cycleKey={selected} duration={7000} paused={paused} onDone={() => choose((selected + 1) % STEPS.length)} className="h-full w-full" />
+                    )}
                   </span>
                 </button>
               );
@@ -513,6 +497,7 @@ export default function TourSection() {
             </li>
           ))}
         </ol>
+      </div>
       </div>
     </Section>
   );

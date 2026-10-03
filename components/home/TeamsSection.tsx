@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Eyebrow, Heading, ProductTag, Section, tabKeyHandler, useSwap, type ProductKey } from "./shared";
 import { Badge, Frame, Initials, Metric, Panel, Row, Rows } from "./ui-kit";
 import { revealOnScroll, useGsap } from "@/lib/motion";
+import { AutoProgress, useAutoplayPause } from "./AutoProgress";
 
 // Section 6 — organised around roles, not products.
 // The "Owners" view is a workspace concept, not a shipped unified dashboard.
@@ -263,7 +264,10 @@ const VIEWS: Record<RoleId, React.ComponentType> = {
 
 export default function TeamsSection() {
   const ref = useRef<HTMLElement>(null);
+  const areaRef = useRef<HTMLDivElement>(null);
   const { selected, shown, leaving, select } = useSwap(0, 160);
+  const { paused, hoverProps } = useAutoplayPause(areaRef);
+  const next = () => select((selected + 1) % ROLES.length);
   const role = ROLES[shown];
   const View = VIEWS[role.id];
 
@@ -278,7 +282,7 @@ export default function TeamsSection() {
         <Heading id="teams-heading" lead="Different teams." accent="One connected workspace." />
       </div>
 
-      <div className="mt-14 grid grid-cols-1 gap-8 lg:mt-20 lg:grid-cols-[minmax(0,32fr)_minmax(0,68fr)] lg:gap-0">
+      <div ref={areaRef} {...hoverProps} className="mt-14 grid grid-cols-1 gap-8 lg:mt-20 lg:grid-cols-[minmax(0,32fr)_minmax(0,68fr)] lg:gap-0">
         {/* Role navigation */}
         <div
           role="tablist"
@@ -317,6 +321,11 @@ export default function TeamsSection() {
                   <span className="lg:hidden">{r.short}</span>
                   <span className="hidden lg:inline">{r.label}</span>
                 </span>
+                {active && (
+                  <span className="pointer-events-none absolute inset-x-3 bottom-0 h-[2px] overflow-hidden lg:inset-x-0 lg:-bottom-px">
+                    <AutoProgress cycleKey={selected} duration={7000} paused={paused} onDone={next} className="h-full w-full" />
+                  </span>
+                )}
                 <ArrowRight
                   aria-hidden="true"
                   className={`ml-auto hidden h-4 w-4 transition-all duration-300 lg:block ${

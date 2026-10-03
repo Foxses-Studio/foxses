@@ -107,6 +107,11 @@ body {
 .fx-pulse-once { animation: fx-pulse-once 1.4s ease-out 500ms 2; }
 .fx-caret { animation: fx-caret 1s steps(1) 4; }
 
+/* Autoplay timer bar — the animation's end advances the tab (see AutoProgress) */
+@keyframes fx-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.fx-progress { transform-origin: left; animation-name: fx-progress; animation-timing-function: linear; animation-fill-mode: both; }
+.fx-progress[data-paused="true"] { animation-play-state: paused; }
+
 /* One-time "state change" helpers used by role / tour previews */
 @keyframes fx-fill-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes fx-arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -120,6 +125,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .fx-swap-out { animation: none; opacity: 0; }
   .fx-swap-in { animation: none; opacity: 1; }
+  .fx-progress { animation: none; transform: scaleX(0); }
   .fx-fill-x, .fx-arrive,
   .fx-enter, .fx-slide-in, .fx-draw-line, .fx-grow-bar, .fx-pulse-once, .fx-caret { animation: none; }
 }

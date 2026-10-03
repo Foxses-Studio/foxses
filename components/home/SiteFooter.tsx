@@ -79,8 +79,23 @@ export default function SiteFooter() {
 
   useGsap(ref, (mm) => {
     mm.add(MQ.motion, () => {
-      gsap.from("[data-footer-nav]", { autoAlpha: 0, duration: 0.6, ease: EASE, scrollTrigger: { trigger: "[data-footer-nav]", start: "top 90%", once: true } });
-      gsap.from("[data-footer-mark]", { autoAlpha: 0, y: 20, duration: 0.9, ease: EASE, scrollTrigger: { trigger: "[data-footer-mark]", start: "top 95%", once: true } });
+      // Starts as soon as the footer's top edge appears, so it can never stay hidden
+      gsap.from("[data-footer-nav] > *", {
+        autoAlpha: 0,
+        y: 18,
+        duration: 0.8,
+        ease: EASE,
+        stagger: 0.08,
+        scrollTrigger: { trigger: ref.current, start: "top bottom-=60", toggleActions: "play none none none" },
+      });
+      // The wordmark settles into place once the footer is well in view
+      gsap.from("[data-footer-mark]", {
+        autoAlpha: 0,
+        y: 48,
+        duration: 1.1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 65%", toggleActions: "play none none none" },
+      });
     });
   });
 
@@ -171,7 +186,7 @@ export default function SiteFooter() {
           <div aria-hidden="true" className="relative overflow-hidden border-t border-zinc-200 pt-8 dark:border-zinc-800">
             <p
               data-footer-mark
-              className="select-none pb-4 text-center text-[22vw] font-bold leading-[0.85] tracking-[-0.04em] text-zinc-900/[0.06] lg:text-[17vw] min-[1600px]:text-[260px] dark:text-white/[0.05]"
+              className="select-none pb-6 text-center text-[22vw] font-bold leading-[0.9] tracking-[-0.04em] text-zinc-900/[0.06] lg:text-[17vw] min-[1600px]:text-[260px] dark:text-white/[0.05]"
             >
               FOXSES
               <span className="ml-[0.04em] inline-block h-[0.12em] w-[0.12em] rounded-full bg-[#f25b2a]/80 align-baseline" />

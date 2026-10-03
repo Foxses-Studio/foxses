@@ -43,21 +43,22 @@ export function useGsap(
 }
 
 /**
- * Standard entrance: every `[data-reveal]` element inside the section rises
- * slightly and fades in, in DOM order, once the section reaches the viewport.
+ * Standard entrance: each `[data-reveal]` element rises slightly and fades in
+ * as it reaches the viewport (batched, so neighbours stagger together).
  * `data-reveal="soft"` uses a smaller movement (for large visuals).
+ *
+ * Triggers are never `once` — self-killing triggers during a refresh (e.g.
+ * when the browser restores scroll on reload) corrupt ScrollTrigger's list.
  */
-export function revealOnScroll(el: HTMLElement, start = "top 78%") {
+export function revealOnScroll(el: HTMLElement, start = "top 88%") {
   if (prefersReducedMotion()) return;
   const items = gsap.utils.toArray<HTMLElement>("[data-reveal]", el);
   if (!items.length) return;
-  gsap.from(items, {
-    autoAlpha: 0,
-    y: (_, target: HTMLElement) => (target.dataset.reveal === "soft" ? 14 : 20),
-    duration: 0.8,
-    ease: EASE,
-    stagger: 0.07,
-    scrollTrigger: { trigger: el, start, once: true },
+  gsap.set(items, { autoAlpha: 0, y: (_: number, t: HTMLElement) => (t.dataset.reveal === "soft" ? 16 : 22) });
+  ScrollTrigger.batch(items, {
+    start,
+    onEnter: (batch) =>
+      gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.85, ease: EASE, stagger: 0.08, overwrite: true }),
   });
 }
 

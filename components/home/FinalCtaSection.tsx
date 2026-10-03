@@ -30,7 +30,7 @@ export default function FinalCtaSection() {
 
   useGsap(ref, (mm) => {
     mm.add(MQ.motion, () => {
-      const tl = gsap.timeline({ scrollTrigger: { trigger: "[data-cta-copy]", start: "top 80%", once: true }, defaults: { ease: EASE } });
+      const tl = gsap.timeline({ scrollTrigger: { trigger: "[data-cta-copy]", start: "top 80%", toggleActions: "play none none none" }, defaults: { ease: EASE } });
       tl.fromTo("[data-cta-line]", { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.1, stagger: 0.05, ease: "power2.inOut" })
         .from("[data-cta-icon]", { autoAlpha: 0, scale: 0.9, duration: 0.5 }, 0.2)
         .from("[data-cta-step]", { autoAlpha: 0, y: 16, duration: 0.7, stagger: 0.09 }, 0.3)

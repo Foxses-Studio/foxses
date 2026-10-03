@@ -150,13 +150,13 @@ export default function WhySection() {
 
     mm.add(MQ.motion, () => {
       // Structure first, then each value and its visual, once
-      gsap.from("[data-why-hline]", { scaleX: 0, duration: 1, ease: "power3.inOut", scrollTrigger: { trigger: "[data-why-grid]", start: "top 80%", once: true } });
-      gsap.from("[data-why-vline]", { scaleY: 0, duration: 1, ease: "power3.inOut", scrollTrigger: { trigger: "[data-why-grid]", start: "top 80%", once: true } });
-      gsap.from("[data-why-cell]", { autoAlpha: 0, y: 16, duration: 0.7, ease: EASE, stagger: 0.08, scrollTrigger: { trigger: "[data-why-grid]", start: "top 75%", once: true } });
+      gsap.from("[data-why-hline]", { scaleX: 0, duration: 1, ease: "power3.inOut", scrollTrigger: { trigger: "[data-why-grid]", start: "top 80%", toggleActions: "play none none none" } });
+      gsap.from("[data-why-vline]", { scaleY: 0, duration: 1, ease: "power3.inOut", scrollTrigger: { trigger: "[data-why-grid]", start: "top 80%", toggleActions: "play none none none" } });
+      gsap.from("[data-why-cell]", { autoAlpha: 0, y: 16, duration: 0.7, ease: EASE, stagger: 0.08, scrollTrigger: { trigger: "[data-why-grid]", start: "top 75%", toggleActions: "play none none none" } });
 
       const cells = gsap.utils.toArray<HTMLElement>("[data-why-cell]");
       cells.forEach((cell, i) => {
-        const tl = gsap.timeline({ scrollTrigger: { trigger: cell, start: "top 70%", once: true }, defaults: { ease: EASE } });
+        const tl = gsap.timeline({ scrollTrigger: { trigger: cell, start: "top 70%", toggleActions: "play none none none" }, defaults: { ease: EASE } });
         if (i === 0) {
           tl.fromTo(cell.querySelectorAll("[data-why-line]"), { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.9, stagger: 0.06 })
             .from(cell.querySelector("[data-why-node]"), { scale: 0.6, autoAlpha: 0, duration: 0.5 }, "-=0.35");

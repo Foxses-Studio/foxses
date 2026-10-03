@@ -11,6 +11,7 @@ import {
   type ProductId,
 } from "./product-data";
 import ScaledPreview from "./ScaledPreview";
+import { AutoProgress, useAutoplayPause } from "@/components/home/AutoProgress";
 import { COMPACT_SIZE, DESKTOP_SIZE } from "./previews/ui";
 import InventoryPreview from "./previews/InventoryPreview";
 import FormsPreview from "./previews/FormsPreview";
@@ -105,6 +106,22 @@ export default function ProductShowcase() {
     },
     [reducedMotion]
   );
+
+  // Autoplay: step through the products in the current category; a
+  // single-product category hands over to the next category
+  const panelRef = useRef<HTMLDivElement>(null);
+  const { paused, hoverProps } = useAutoplayPause(panelRef);
+  const autoNext = () => {
+    const list = productsIn(category);
+    if (list.length > 1) {
+      const i = list.findIndex((p) => p.id === selected);
+      showProduct(list[(i + 1) % list.length].id);
+      return;
+    }
+    const cats = CATEGORIES.filter((c) => c.id !== "all");
+    const ci = cats.findIndex((c) => c.id === category);
+    selectCategory(cats[(ci + 1) % cats.length].id);
+  };
 
   const selectCategory = (id: CategoryId) => {
     setCategory(id);
@@ -223,13 +240,19 @@ export default function ProductShowcase() {
 
           {/* SHOWCASE */}
           <div
+            ref={panelRef}
+            {...hoverProps}
             id="products-panel"
             role="tabpanel"
             aria-labelledby={activeTabId}
-            className={`mt-8 sm:mt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)] overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 transition-all duration-700 delay-300 ease-out motion-reduce:transition-none ${
+            className={`relative mt-8 sm:mt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)] overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 transition-all duration-700 delay-300 ease-out motion-reduce:transition-none ${
               isVisible ? "opacity-100" : "opacity-0 motion-reduce:opacity-100"
             }`}
           >
+            <span className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[2px] overflow-hidden">
+              <AutoProgress cycleKey={`${category}-${selected}`} duration={7000} paused={paused} onDone={autoNext} className="h-full w-full" />
+            </span>
+
             {/* Product story */}
             <div className="flex min-w-0 flex-col p-6 sm:p-10 xl:p-12">
               {categoryProducts.length > 1 && (

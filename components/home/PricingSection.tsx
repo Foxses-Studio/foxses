@@ -46,7 +46,7 @@ export default function PricingSection() {
     revealOnScroll(el);
     mm.add(MQ.motion, () => {
       const stages = gsap.utils.toArray<HTMLElement>("[data-price-stage]");
-      const tl = gsap.timeline({ scrollTrigger: { trigger: "[data-price-track]", start: "top 75%", once: true }, defaults: { ease: EASE } });
+      const tl = gsap.timeline({ scrollTrigger: { trigger: "[data-price-track]", start: "top 75%", toggleActions: "play none none none" }, defaults: { ease: EASE } });
       stages.forEach((stage, i) => {
         tl.from(stage, { autoAlpha: 0, y: 14, duration: 0.5 }, i * 0.15).from(
           stage.querySelectorAll("[data-price-chip]"),

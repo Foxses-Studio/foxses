@@ -78,7 +78,7 @@ export default function SecuritySection() {
 
     mm.add(MQ.motion, () => {
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: "[data-trust]", start: "top 72%", once: true },
+        scrollTrigger: { trigger: "[data-trust]", start: "top 72%", toggleActions: "play none none none" },
         defaults: { ease: EASE },
       });
       tl.from("[data-trust-layer]", { autoAlpha: 0, duration: 0.7, stagger: 0.18 })

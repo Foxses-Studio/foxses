@@ -8,6 +8,8 @@ import { STAGE_VIEWS } from "./StageViews";
 const STEP_MS = 3200;
 const LEAVE_MS = 180;
 const LAST = STAGES.length - 1;
+const END_HOLD_MS = 5000;
+const RESUME_MS = 10000;
 
 type Mode = "idle" | "playing" | "done" | "stopped";
 
@@ -64,7 +66,7 @@ export default function WorkflowSection() {
     [reduced]
   );
 
-  // Manual navigation always wins over autoplay
+  // Manual navigation pauses autoplay; it picks up again after a quiet moment
   const choose = (i: number) => {
     setMode("stopped");
     goTo(Math.max(0, Math.min(LAST, i)));
@@ -101,15 +103,16 @@ export default function WorkflowSection() {
     []
   );
 
-  // Autoplay: one full pass, then stop on Support
+  // Autoplay: loops through every stage, resting a little longer on Support
   const paused = hovering || !inView || tabHidden;
   useEffect(() => {
-    if (mode !== "playing" || paused || reduced) return;
-    const t = setTimeout(() => {
-      const next = step + 1;
-      goTo(next);
-      if (next >= LAST) setMode("done");
-    }, STEP_MS);
+    if (paused || reduced) return;
+    if (mode === "stopped") {
+      const t = setTimeout(() => setMode("playing"), RESUME_MS);
+      return () => clearTimeout(t);
+    }
+    if (mode !== "playing") return;
+    const t = setTimeout(() => goTo(step >= LAST ? 0 : step + 1), step >= LAST ? END_HOLD_MS : STEP_MS);
     return () => clearTimeout(t);
   }, [mode, paused, reduced, step, goTo]);
 
