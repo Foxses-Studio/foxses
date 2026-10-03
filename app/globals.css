@@ -93,3 +93,35 @@ body {
   animation: dropdown-expand 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transform-origin: top;
 }
+
+@layer base {
+  .maplibregl-popup-content {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  .maplibregl-popup-tip {
+    display: none !important;
+  }
+  .maplibregl-ctrl-attrib {
+    background-color: var(--background) !important;
+    color: #71717a !important;
+    border-color: #e4e4e7 !important;
+    border-radius: 6px !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+  }
+  .maplibregl-ctrl-attrib a {
+    color: #71717a !important;
+  }
+  .maplibregl-ctrl-attrib a:hover {
+    color: var(--foreground) !important;
+  }
+  .maplibregl-ctrl-attrib-button {
+    background-color: transparent !important;
+  }
+  .dark .maplibregl-ctrl-attrib-button {
+    filter: invert(1);
+  }
+}

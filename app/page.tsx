@@ -3,6 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import TrustedBy from "@/components/TrustedBy";
+import EcosystemSection from "@/components/EcosystemSection";
 
 export default function Home() {
   // নেভিগেশন মেনু আইটেমসমূহ
@@ -26,6 +27,7 @@ export default function Home() {
       <main className="w-full">
         <Hero />
         <TrustedBy />
+        <EcosystemSection />
       </main>
     </div>
   );

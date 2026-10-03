@@ -6,12 +6,17 @@ import Image from "next/image";
 interface TrustedLogo {
   name: string;
   src: string;
+  className?: string;
 }
 
 const trustedLogos: TrustedLogo[] = [
   { name: "Acadia Shops", src: "/trusted_by/acadiashops.png" },
   { name: "Canadian Nest", src: "/trusted_by/canadian_nest.png" },
-  { name: "Cheshire Pathway Mediation", src: "/trusted_by/cheshirepathwaymediation.png" },
+  {
+    name: "Cheshire Pathway Mediation",
+    src: "/trusted_by/cheshirepathwaymediation.png",
+    className: "max-h-16 sm:max-h-24 scale-125 sm:scale-140",
+  },
   { name: "Fusion Pro", src: "/trusted_by/fusionpro.png" },
   { name: "Grey Lee Consulting", src: "/trusted_by/greyleeconsulting.png" },
   { name: "Safari", src: "/trusted_by/safari.png" },
@@ -42,7 +47,9 @@ export function TrustedBy() {
                   alt={logo.name}
                   width={220}
                   height={80}
-                  className="max-h-12 sm:max-h-16 w-auto object-contain grayscale dark:invert dark:brightness-200 transition-all duration-300"
+                  className={`w-auto object-contain grayscale dark:invert dark:brightness-150 transition-all duration-300 ${
+                    logo.className || "max-h-12 sm:max-h-16"
+                  }`}
                 />
               </div>
             </div>
