@@ -6,23 +6,40 @@ import Image from "next/image";
 interface TrustedLogo {
   name: string;
   src: string;
-  className?: string;
+  /** Intrinsic size of the trimmed monochrome mark */
+  width: number;
+  height: number;
 }
 
+// One-colour versions of each brand mark (public/trusted_by/mono), trimmed to
+// their visible content so they can be sized consistently.
 const trustedLogos: TrustedLogo[] = [
-  { name: "Acadia Shops", src: "/trusted_by/acadiashops.png" },
-  { name: "Canadian Nest", src: "/trusted_by/canadian_nest.png" },
-  {
-    name: "Cheshire Pathway Mediation",
-    src: "/trusted_by/cheshirepathwaymediation.png",
-    className: "max-h-16 sm:max-h-24 scale-125 sm:scale-140",
-  },
-  { name: "Fusion Pro", src: "/trusted_by/fusionpro.png" },
-  { name: "Grey Lee Consulting", src: "/trusted_by/greyleeconsulting.png" },
-  { name: "Safari", src: "/trusted_by/safari.png" },
-  { name: "Southern Charm Floors", src: "/trusted_by/southerncharmfloors..png" },
-  { name: "SRSA", src: "/trusted_by/srsa.png" },
+  { name: "Acadia Shops", src: "/trusted_by/mono/acadiashops.png", width: 978, height: 448 },
+  { name: "Canadian Nest School", src: "/trusted_by/mono/canadian-nest.png", width: 1003, height: 295 },
+  { name: "Cheshire Pathway Mediation", src: "/trusted_by/mono/cheshire-pathway.png", width: 614, height: 190 },
+  { name: "Fusion Pro", src: "/trusted_by/mono/fusionpro.png", width: 224, height: 40 },
+  { name: "Grey Lee Consulting", src: "/trusted_by/mono/greylee.png", width: 810, height: 190 },
+  { name: "Keystone Safari", src: "/trusted_by/mono/keystone-safari.png", width: 184, height: 57 },
+  { name: "Southern Charm Floors", src: "/trusted_by/mono/southern-charm.png", width: 114, height: 64 },
+  { name: "Small Business Survival Alliance", src: "/trusted_by/mono/srsa.png", width: 139, height: 52 },
 ];
+
+// Give every mark roughly the same visual area, so wide wordmarks and compact
+// emblems carry equal weight.
+const TARGET_AREA = 5800;
+const MAX_HEIGHT = 56;
+const MAX_WIDTH = 168;
+
+function displaySize({ width, height }: TrustedLogo) {
+  const aspect = width / height;
+  let h = Math.min(MAX_HEIGHT, Math.sqrt(TARGET_AREA / aspect));
+  let w = h * aspect;
+  if (w > MAX_WIDTH) {
+    w = MAX_WIDTH;
+    h = w / aspect;
+  }
+  return { w: Math.round(w), h: Math.round(h) };
+}
 
 export function TrustedBy() {
   return (
@@ -33,28 +50,28 @@ export function TrustedBy() {
           TRUSTED BY GROWING TEAMS & INNOVATIVE BRANDS
         </p>
 
-        {/* Logos Container */}
-        <div className="flex flex-wrap items-center justify-center gap-x-10 sm:gap-x-14 gap-y-10 max-w-6xl mx-auto">
-          {trustedLogos.map((logo, index) => (
-            <div
-              key={index}
-              className="group flex items-center justify-center p-2 h-16 sm:h-20 w-36 sm:w-44 rounded-lg transition-all duration-300 hover:scale-105"
-            >
-              {/* Logo Image */}
-              <div className="relative w-full h-14 sm:h-16 flex items-center justify-center opacity-85 dark:opacity-90 hover:opacity-100 transition-all duration-300">
+        {/* Logos — equal cells, same colour, same visual weight */}
+        <ul className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-4 border-l border-t border-zinc-200/80 dark:border-zinc-800">
+          {trustedLogos.map((logo) => {
+            const { w, h } = displaySize(logo);
+            return (
+              <li
+                key={logo.name}
+                className="group flex h-24 sm:h-28 items-center justify-center border-r border-b border-zinc-200/80 dark:border-zinc-800 px-4"
+              >
                 <Image
                   src={logo.src}
                   alt={logo.name}
-                  width={220}
-                  height={80}
-                  className={`w-auto object-contain grayscale dark:invert dark:brightness-150 transition-all duration-300 ${
-                    logo.className || "max-h-12 sm:max-h-16"
-                  }`}
+                  width={logo.width}
+                  height={logo.height}
+                  sizes="(min-width: 640px) 168px, 135px"
+                  style={{ width: w, height: h }}
+                  className="max-w-full object-contain opacity-70 scale-[0.8] sm:scale-100 transition-opacity duration-300 group-hover:opacity-90 dark:invert dark:opacity-70 dark:group-hover:opacity-100"
                 />
-              </div>
-            </div>
-          ))}
-        </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
