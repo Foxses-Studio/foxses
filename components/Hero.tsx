@@ -118,9 +118,9 @@ export default function Hero() {
           className="group inline-flex items-center gap-2 rounded-full border border-[#f25b2a]/30 bg-[#fff6f0] dark:bg-[#f25b2a]/10 px-4 py-1 text-[16px] text-[#f25b2a] font-medium transition-all duration-200 hover:border-[#f25b2a] hover:scale-105 active:scale-95 mb-6 cursor-pointer shadow-none"
         >
           <FaWandMagicSparkles className="h-3.5 w-3.5 text-[#f25b2a] transition-transform duration-300 group-hover:rotate-12" />
-          <span>Sara AI Studio</span>
-          <span className="text-zinc-300 dark:text-zinc-700">•</span>
-          <span className="text-zinc-600 dark:text-zinc-300 font-normal">Connected Apps 2.0</span>
+          <span className="whitespace-nowrap">Sara AI Studio</span>
+          <span className="text-zinc-300 dark:text-zinc-700 max-[400px]:hidden">•</span>
+          <span className="whitespace-nowrap text-zinc-600 dark:text-zinc-300 font-normal max-[400px]:hidden">Connected Apps 2.0</span>
           <FaArrowRight className="h-3 w-3 text-[#f25b2a] ml-1 transition-transform duration-300 group-hover:translate-x-1" />
         </div>
 
