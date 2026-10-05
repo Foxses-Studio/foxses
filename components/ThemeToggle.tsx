@@ -1,63 +1,45 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { FaSun, FaMoon } from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
 
 interface ThemeToggleProps {
   className?: string;
   showText?: boolean;
 }
 
+// True only after hydration, so the icon never mismatches the server render
+const useMounted = () =>
+  useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
 export function ThemeToggle({ className = "", showText = false }: ThemeToggleProps) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <Button
-        variant="ghost"
-        size="icon"
-        className={`rounded-[8px] h-10 w-10 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 ${className}`}
-        aria-label="Loading Theme Switcher"
-      >
-        <FaSun className="h-5 w-5 text-amber-500 opacity-50" />
-      </Button>
-    );
-  }
-
-  const isDark = resolvedTheme === "dark";
-
-  const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark");
-  };
+  const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useMounted();
+  const isDark = mounted && resolvedTheme === "dark";
+  const label = isDark ? "Switch to light theme" : "Switch to dark theme";
 
   return (
-    <Button
-      variant="ghost"
-      size={showText ? "default" : "icon"}
-      onClick={toggleTheme}
-      className={`group relative rounded-[8px] ${
-        showText ? "px-3.5 py-2 h-10 w-auto gap-2" : "h-10 w-10"
-      } text-zinc-800 dark:text-zinc-200 hover:bg-amber-500/10 dark:hover:bg-amber-400/10 hover:border-amber-500/30 transition-all duration-300 hover:scale-110 active:scale-90 border border-zinc-200/80 dark:border-zinc-800 ${className}`}
-      title={`Switch to ${isDark ? "Light" : "Dark"} mode`}
-      aria-label="Toggle dark/light theme"
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      disabled={!mounted}
+      aria-label={label}
+      title={label}
+      className={`group inline-flex items-center justify-center gap-2 rounded-[8px] border border-zinc-200/80 text-zinc-700 transition-colors duration-200 hover:border-[#f25b2a]/40 hover:text-[#f25b2a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a] disabled:opacity-60 dark:border-zinc-800 dark:text-zinc-300 ${
+        showText ? "h-10 px-3.5" : "h-10 w-10"
+      } ${className}`}
     >
       {isDark ? (
-        <FaMoon className="h-4 w-4 text-amber-300 transition-transform duration-500 group-hover:rotate-45 group-hover:scale-110" />
+        <Moon aria-hidden="true" strokeWidth={1.75} className="h-[18px] w-[18px]" />
       ) : (
-        <FaSun className="h-4 w-4 text-amber-500 transition-transform duration-500 group-hover:rotate-90 group-hover:scale-120" />
+        <Sun aria-hidden="true" strokeWidth={1.75} className="h-[18px] w-[18px]" />
       )}
-      {showText && (
-        <span className="text-[14px] font-medium transition-colors group-hover:text-amber-500">
-          {isDark ? "Dark Mode" : "Light Mode"}
-        </span>
-      )}
-    </Button>
+      {showText && <span className="text-[16px] font-medium">{isDark ? "Dark" : "Light"}</span>}
+    </button>
   );
 }

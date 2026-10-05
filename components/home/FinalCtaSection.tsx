@@ -2,24 +2,15 @@
 
 import React, { useRef } from "react";
 import Image from "next/image";
-import Swal from "sweetalert2";
+import Link from "next/link";
+import { SIGNUP_HREF } from "@/components/nav/nav-data";
 import { ArrowRight } from "lucide-react";
 import { TextLink } from "./shared";
 import { EASE, gsap, MQ, useGsap } from "@/lib/motion";
 
 // Section 14 — the closing statement. One message, one action.
-// "Get Started" mirrors the navbar's current onboarding placeholder until a
-// real signup route exists; swap `startOnboarding` for that route then.
-
-function startOnboarding() {
-  Swal.fire({
-    title: "Get Started",
-    text: "Create your Foxses account.",
-    icon: "info",
-    confirmButtonText: "Continue",
-    confirmButtonColor: "#f25b2a",
-  });
-}
+// "Get Started" points at the signup route; until that page exists it lands
+// on the custom "not ready yet" page instead of pretending to work.
 
 // Lines enter from the edges and stop short of the copy
 const LEFT_LINES = ["M0 90 L235 250", "M0 360 L170 360", "M0 640 L235 480"];
@@ -86,15 +77,14 @@ export default function FinalCtaSection() {
           </h2>
 
           <div data-cta-step className="mt-12 flex flex-col items-center justify-center gap-5 sm:flex-row sm:gap-8">
-            <button
-              type="button"
-              onClick={startOnboarding}
+            <Link
+              href={SIGNUP_HREF}
               className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-[8px] bg-[#f25b2a] px-7 text-[16px] font-medium text-white transition-colors hover:bg-[#d84b1b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a] sm:w-auto"
             >
               Get Started
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-[3px]" aria-hidden="true" />
-            </button>
-            <TextLink href="#products">Explore Products</TextLink>
+            </Link>
+            <TextLink href="/#products">Explore Products</TextLink>
           </div>
         </div>
       </div>

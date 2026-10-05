@@ -1,69 +1,22 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Swal from "sweetalert2";
-import {
-  FaChevronDown,
-  FaBars,
-  FaXmark,
-  FaCloud,
-  FaWpforms,
-  FaFileInvoiceDollar,
-  FaBoxesPacking,
-  FaCartShopping,
-  FaArrowRight,
-  FaBuilding,
-  FaUserTie,
-  FaHeadset,
-  FaLayerGroup,
-  FaStore,
-  FaBriefcase,
-  FaGears,
-  FaBook,
-  FaCircleQuestion,
-  FaNewspaper,
-  FaBuildingUser,
-  FaEnvelope,
-  FaUsersGear,
-  FaBullhorn,
-  FaShieldHalved,
-  FaCode,
-  FaRobot,
-  FaEnvelopeOpenText,
-  FaChess,
-  FaBookBookmark,
-  FaCrown,
-  FaGlobe,
-  FaAward,
-  FaStar,
-  FaHandshake,
-  FaLocationDot,
-} from "react-icons/fa6";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { usePathname } from "next/navigation";
+import { ArrowRight, ChevronDown, Menu, Minus, Plus, X } from "lucide-react";
 import gsap from "gsap";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import {
+  defaultMenuItems,
+  LOGIN_HREF,
+  MENU_BY_LABEL,
+  SIGNUP_HREF,
+  type DropdownColumn,
+  type MenuItem,
+} from "@/components/nav/nav-data";
 
-export interface DropdownItem {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  href: string;
-}
-
-export interface DropdownColumn {
-  title: string;
-  items: DropdownItem[];
-}
-
-export interface MenuItem {
-  label: string;
-  href: string;
-  hasDropdown?: boolean;
-  megaMenu?: DropdownColumn[];
-  active?: boolean;
-}
+export type { DropdownColumn, DropdownItem, MenuItem } from "@/components/nav/nav-data";
 
 export interface NavbarProps {
   lightLogoSrc?: string;
@@ -76,662 +29,467 @@ export interface NavbarProps {
   onGetStartedClick?: () => void;
 }
 
+const CLOSE_DELAY_MS = 120;
+const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const columnsFor = (item: MenuItem): DropdownColumn[] => item.megaMenu ?? MENU_BY_LABEL[item.label] ?? [];
 
-export const defaultProductsMegaMenu: DropdownColumn[] = [
-  {
-    title: "CORE PRODUCTS",
-    items: [
-      {
-        icon: <FaBoxesPacking className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Foxses Inventory",
-        description: "Real-time stock management & inventory tracking",
-        href: "/products/inventory",
-      },
-      {
-        icon: <FaFileInvoiceDollar className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Foxses Invoice",
-        description: "Automated billing, invoicing & payment tracking",
-        href: "/products/invoice",
-      },
-      {
-        icon: <FaLayerGroup className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Foxses Templates",
-        description: "Premium responsive web & app design templates",
-        href: "/products/templates",
-      },
-    ],
-  },
-  {
-    title: "FORMS & HR",
-    items: [
-      {
-        icon: <FaWpforms className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Cloud Forms",
-        description: "Smart form builder & data collection platform",
-        href: "/products/cloud-forms",
-      },
-      {
-        icon: <FaUsersGear className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Foxses HR",
-        description: "Human resources, attendance, payroll & employee management",
-        href: "/products/foxses-hr",
-      },
-    ],
-  },
-  {
-    title: "OTHER PRODUCTS",
-    items: [
-      {
-        icon: <FaCartShopping className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "F-Commerce",
-        description: "Facebook commerce & social store automation solution",
-        href: "/products/f-commerce",
-      },
-      {
-        icon: <FaHeadset className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Web Support System",
-        description: "Customer support & help desk ticketing system",
-        href: "/products/web-support-system",
-      },
-    ],
-  },
-];
-
-export const defaultSolutionsMegaMenu: DropdownColumn[] = [
-  {
-    title: "BUSINESS TYPES",
-    items: [
-      {
-        icon: <FaBuilding className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Small Businesses",
-        description: "Tailored management platform for small businesses",
-        href: "/solutions/small-businesses",
-      },
-      {
-        icon: <FaCartShopping className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Retail & E-commerce",
-        description: "Online & offline retail store management solutions",
-        href: "/solutions/retail-ecommerce",
-      },
-    ],
-  },
-  {
-    title: "OPERATIONS & SERVICES",
-    items: [
-      {
-        icon: <FaBriefcase className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Service Businesses",
-        description: "Workflow automation for service providers & agencies",
-        href: "/solutions/service-businesses",
-      },
-      {
-        icon: <FaGears className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Business Operations",
-        description: "Streamline daily operational & management workflows",
-        href: "/solutions/business-operations",
-      },
-    ],
-  },
-];
-
-export const defaultResourcesMegaMenu: DropdownColumn[] = [
-  {
-    title: "LEARN",
-    items: [
-      {
-        icon: <FaBullhorn className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Announcements Hub",
-        description: "Latest product updates, news & announcements",
-        href: "/resources/announcements",
-      },
-      {
-        icon: <FaShieldHalved className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Security Solutions",
-        description: "Data protection, privacy & security guidelines",
-        href: "/resources/security",
-      },
-      {
-        icon: <FaCode className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Developer Center",
-        description: "SDKs, REST APIs & developer documentation",
-        href: "/resources/developer-center",
-      },
-      {
-        icon: <FaNewspaper className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Blog",
-        description: "Articles, tech insights & industry stories",
-        href: "/resources/blog",
-      },
-    ],
-  },
-  {
-    title: "EXPLORE",
-    items: [
-      {
-        icon: <FaRobot className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Sara AI",
-        description: "Foxses AI assistant & intelligent business automation",
-        href: "/resources/sara-ai",
-      },
-      {
-        icon: <FaEnvelopeOpenText className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Newsletter",
-        description: "Weekly tech, product & strategy digest",
-        href: "/resources/newsletter",
-      },
-      {
-        icon: <FaChess className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "The Long Game",
-        description: "Long-term business growth & strategy insights",
-        href: "/resources/long-game",
-      },
-    ],
-  },
-  {
-    title: "SUPPORT",
-    items: [
-      {
-        icon: <FaBookBookmark className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Knowledge Base",
-        description: "Articles, FAQs & step-by-step troubleshooting",
-        href: "/resources/knowledge-base",
-      },
-      {
-        icon: <FaCrown className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Concierge",
-        description: "Dedicated VIP & premium customer assistance",
-        href: "/resources/concierge",
-      },
-      {
-        icon: <FaEnvelope className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Contact Us",
-        description: "Get in touch with our support & sales team",
-        href: "/resources/contact",
-      },
-    ],
-  },
-];
-
-export const defaultCompanyMegaMenu: DropdownColumn[] = [
-  {
-    title: "ABOUT COMPANY",
-    items: [
-      {
-        icon: <FaBuildingUser className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "About Foxses Studio",
-        description: "Learn about our mission, vision & leadership team",
-        href: "/company/about",
-      },
-      {
-        icon: <FaGlobe className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Our Story & Impact",
-        description: "Discover our journey, values & global business impact",
-        href: "/company/story",
-      },
-      {
-        icon: <FaUserTie className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Careers",
-        description: "Join the Foxses Studio team and grow with us",
-        href: "/company/careers",
-      },
-    ],
-  },
-  {
-    title: "SUCCESS & STORIES",
-    items: [
-      {
-        icon: <FaAward className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Case Studies",
-        description: "Real-world customer success stories & enterprise results",
-        href: "/company/case-studies",
-      },
-      {
-        icon: <FaStar className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Customer Reviews",
-        description: "Testimonials and ratings from global business clients",
-        href: "/company/reviews",
-      },
-      {
-        icon: <FaBullhorn className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Press & Media",
-        description: "Newsroom, press releases & brand media assets",
-        href: "/company/press",
-      },
-    ],
-  },
-  {
-    title: "CONNECT & NETWORK",
-    items: [
-      {
-        icon: <FaEnvelope className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Contact Us",
-        description: "Get in touch with our support & enterprise sales team",
-        href: "/company/contact",
-      },
-      {
-        icon: <FaHandshake className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Partners Program",
-        description: "Become a Foxses reseller, affiliate or integration partner",
-        href: "/company/partners",
-      },
-      {
-        icon: <FaLocationDot className="h-5 w-5 text-zinc-800 dark:text-zinc-200" />,
-        title: "Office Locations",
-        description: "Find our global office hubs and contact addresses",
-        href: "/company/locations",
-      },
-    ],
-  },
-];
-
-const defaultMenuItems: MenuItem[] = [
-  {
-    label: "Products",
-    href: "/products",
-    hasDropdown: true,
-    megaMenu: defaultProductsMegaMenu,
-  },
-  {
-    label: "Solutions",
-    href: "/solutions",
-    hasDropdown: true,
-    megaMenu: defaultSolutionsMegaMenu,
-  },
-  { label: "Pricing", href: "/pricing", hasDropdown: false },
-  {
-    label: "Resources",
-    href: "/resources",
-    hasDropdown: true,
-    megaMenu: defaultResourcesMegaMenu,
-  },
-  {
-    label: "Company",
-    href: "/company",
-    hasDropdown: true,
-    megaMenu: defaultCompanyMegaMenu,
-  },
-];
+const focusRing =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f25b2a]";
 
 export default function Navbar({
   lightLogoSrc = "/all-logo/foxses-full-logo-for-light-them.png",
   darkLogoSrc = "/all-logo/foxses-full-logo-for-dark-them.png",
   logoSrc = "/all-logo/foxses-full-logo.png",
-  logoAlt = "Foxses Logo",
+  logoAlt = "Foxses",
   logoHref = "/",
   menuItems = defaultMenuItems,
   onLoginClick,
   onGetStartedClick,
 }: NavbarProps) {
+  const pathname = usePathname();
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [expanded, setExpanded] = useState<string | null>(null);
 
+  const headerRef = useRef<HTMLElement>(null);
+  const openMenuRef = useRef<string | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const sidebarRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  /* ---------- Desktop dropdowns ---------- */
+
+  const cancelClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+  // When a hover has just opened a menu, the click that follows shouldn't close it
+  const openedAt = useRef(0);
+  // A menu opened by click (or keyboard) stays open when the pointer leaves
+  const pinned = useRef(false);
+  const focusFirstIn = useRef<string | null>(null);
+  const openNow = (label: string, at: number) => {
+    cancelClose();
+    if (openMenuRef.current !== label) openedAt.current = at;
+    setOpenMenu(label);
+  };
+  const closeSoon = () => {
+    if (pinned.current) return;
+    cancelClose();
+    closeTimer.current = setTimeout(() => setOpenMenu(null), CLOSE_DELAY_MS);
+  };
+  const closeMenu = useCallback((refocus = false) => {
+    const current = openMenuRef.current;
+    pinned.current = false;
+    setOpenMenu(null);
+    if (refocus && current) triggerRefs.current[current]?.focus();
+  }, []);
+
+  // Escape and outside clicks close an open dropdown
+  useEffect(() => {
+    if (!openMenu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMenu(true);
+    };
+    const onDown = (e: PointerEvent) => {
+      if (!headerRef.current?.contains(e.target as Node)) closeMenu();
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onDown);
+    };
+  }, [openMenu, closeMenu]);
+
+  useEffect(() => () => cancelClose(), []);
+
+  // Keep a ref of the open menu for event handlers; move focus in after ArrowDown
+  useEffect(() => {
+    openMenuRef.current = openMenu;
+    if (!openMenu) pinned.current = false;
+    if (openMenu && focusFirstIn.current === openMenu) {
+      focusFirstIn.current = null;
+      document.getElementById(`nav-menu-${slug(openMenu)}`)?.querySelector<HTMLElement>("a")?.focus();
+    }
+  }, [openMenu]);
+
+  // Slightly more compact, with a visible edge, once the page has scrolled
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* ---------- Mobile drawer ---------- */
 
   useEffect(() => {
-    if (sidebarOpen && sidebarRef.current && backdropRef.current) {
-      gsap.fromTo(
-        backdropRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.3, ease: "power2.out" }
-      );
-
-      gsap.fromTo(
-        sidebarRef.current,
-        { x: "100%" },
-        { x: "0%", duration: 0.4, ease: "power3.out" }
-      );
-
-      gsap.fromTo(
-        ".gsap-sidebar-item",
-        { opacity: 0, x: 25 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.35,
-          stagger: 0.04,
-          ease: "power2.out",
-          delay: 0.1,
-        }
-      );
+    if (!sidebarOpen) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && sidebarRef.current && backdropRef.current) {
+      gsap.fromTo(backdropRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" });
+      gsap.fromTo(sidebarRef.current, { x: "100%" }, { x: "0%", duration: 0.35, ease: "power3.out" });
     }
+    closeButtonRef.current?.focus();
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
   }, [sidebarOpen]);
 
-  const closeSidebar = (callback?: () => void) => {
-    if (sidebarRef.current && backdropRef.current) {
-      gsap.to(backdropRef.current, {
-        opacity: 0,
-        duration: 0.25,
-        ease: "power2.in",
-      });
-
-      gsap.to(sidebarRef.current, {
-        x: "100%",
-        duration: 0.35,
-        ease: "power3.in",
-        onComplete: () => {
-          setSidebarOpen(false);
-          callback?.();
-        },
-      });
-    } else {
+  const closeSidebar = useCallback((after?: () => void) => {
+    const done = () => {
       setSidebarOpen(false);
-      callback?.();
+      setExpanded(null);
+      menuButtonRef.current?.focus();
+      after?.();
+    };
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !sidebarRef.current || !backdropRef.current) return done();
+    gsap.to(backdropRef.current, { opacity: 0, duration: 0.2, ease: "power2.in" });
+    gsap.to(sidebarRef.current, { x: "100%", duration: 0.3, ease: "power3.in", onComplete: done });
+  }, []);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSidebar();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [sidebarOpen, closeSidebar]);
+
+  /* ---------- Account actions ---------- */
+
+  const accountAction = (kind: "login" | "signup", className: string, children: React.ReactNode, inDrawer = false) => {
+    const handler = kind === "login" ? onLoginClick : onGetStartedClick;
+    if (handler) {
+      return (
+        <button type="button" onClick={() => (inDrawer ? closeSidebar(handler) : handler())} className={className}>
+          {children}
+        </button>
+      );
     }
+    return (
+      <Link href={kind === "login" ? LOGIN_HREF : SIGNUP_HREF} onClick={inDrawer ? () => closeSidebar() : undefined} className={className}>
+        {children}
+      </Link>
+    );
   };
 
-  const toggleDropdown = (label: string) => {
-    setExpandedItems((prev) => (prev[label] ? {} : { [label]: true }));
-  };
-
-  const handleLogin = () => {
-    closeSidebar(() => {
-      if (onLoginClick) {
-        onLoginClick();
-      } else {
-        Swal.fire({
-          title: "Login",
-          text: "Log in to your Foxses account.",
-          icon: "info",
-          confirmButtonText: "Continue",
-          confirmButtonColor: "#f25b2a",
-        });
-      }
-    });
-  };
-
-  const handleGetStarted = () => {
-    closeSidebar(() => {
-      if (onGetStartedClick) {
-        onGetStartedClick();
-      } else {
-        Swal.fire({
-          title: "Get Started Free",
-          text: "Start your free trial today. No credit card required.",
-          icon: "success",
-          confirmButtonText: "Create Account",
-          confirmButtonColor: "#f25b2a",
-        });
-      }
-    });
-  };
-
-  const getMegaMenuData = (item: MenuItem): DropdownColumn[] => {
-    if (item.megaMenu) return item.megaMenu;
-    if (item.label === "Products") return defaultProductsMegaMenu;
-    if (item.label === "Solutions") return defaultSolutionsMegaMenu;
-    if (item.label === "Resources") return defaultResourcesMegaMenu;
-    if (item.label === "Company") return defaultCompanyMegaMenu;
-    return defaultProductsMegaMenu;
-  };
+  const isActive = (href: string) => pathname === href || (href !== "/" && pathname?.startsWith(`${href}/`));
 
   return (
     <>
-      <header className="relative sticky top-0 z-40 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/80 dark:border-zinc-800 shadow-none transition-all">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 sm:px-8 lg:px-12">
-          
-          {/* Left Side: Logo (Light and Dark theme versions) */}
-          <div className="flex items-center">
-            <Link href={logoHref} className="flex items-center gap-2 group">
-              <Image
-                src={lightLogoSrc || logoSrc}
-                alt={logoAlt}
-                width={240}
-                height={60}
-                className="h-12 sm:h-[58px] w-auto object-contain transition-all dark:hidden"
-                priority
-              />
-              <Image
-                src={darkLogoSrc || logoSrc}
-                alt={logoAlt}
-                width={240}
-                height={60}
-                className="h-12 sm:h-[58px] w-auto object-contain transition-all hidden dark:block"
-                priority
-              />
-            </Link>
-          </div>
+      <header
+        ref={headerRef}
+        className={`sticky top-0 z-40 w-full border-b backdrop-blur-md transition-[background-color,border-color] duration-300 ${
+          scrolled || openMenu
+            ? "border-zinc-200/80 bg-white/90 dark:border-zinc-800 dark:bg-zinc-950/90"
+            : "border-transparent bg-white/75 dark:bg-zinc-950/75"
+        }`}
+      >
+        <div
+          className={`mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 transition-[padding] duration-300 sm:px-8 lg:px-12 ${
+            scrolled ? "py-2.5" : "py-3.5"
+          }`}
+        >
+          {/* Logo */}
+          <Link href={logoHref} aria-label="Foxses home" className={`flex shrink-0 items-center rounded-[6px] ${focusRing}`}>
+            <Image src={lightLogoSrc || logoSrc} alt={logoAlt} width={240} height={60} priority className="h-11 w-auto object-contain dark:hidden" />
+            <Image src={darkLogoSrc || logoSrc} alt={logoAlt} width={240} height={60} priority className="hidden h-11 w-auto object-contain dark:block" />
+          </Link>
 
-          {/* Middle: Desktop Navigation Menu */}
-          <nav className="hidden lg:flex lg:items-center lg:gap-6 xl:gap-8">
-            {menuItems.map((item, index) =>
-              item.hasDropdown ? (
-                <div key={`${item.label}-${index}`} className="group py-2">
-                  <div className="inline-flex items-center gap-1.5 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors cursor-pointer">
-                    <span>{item.label}</span>
-                    <FaChevronDown className="h-3 w-3 text-zinc-600 dark:text-zinc-400 transition-transform duration-300 group-hover:rotate-180" />
-                  </div>
+          {/* Desktop navigation */}
+          <nav aria-label="Main" className="hidden lg:block">
+            <ul className="flex items-center gap-0.5 xl:gap-2">
+              {menuItems.map((item) => {
+                const columns = columnsFor(item);
+                const id = `nav-menu-${slug(item.label)}`;
+                const open = openMenu === item.label;
 
-                  {/* Mega Menu Container */}
-                  <div className="absolute left-0 right-0 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out w-full z-50">
-                    <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12">
-                      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[8px] p-6 sm:p-8 shadow-none grid grid-cols-2 lg:grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800">
-                        
-                        {/* Columns rendering */}
-                        {getMegaMenuData(item).map((column, colIdx) => (
-                          <div key={`col-${colIdx}`} className={`${colIdx > 0 ? "pl-6" : "pr-4"}`}>
-                            <h4 className="text-[16px] font-semibold text-zinc-400 dark:text-zinc-500 tracking-wider uppercase mb-4">
-                              {column.title}
-                            </h4>
+                if (!item.hasDropdown || columns.length === 0) {
+                  return (
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        aria-current={isActive(item.href) ? "page" : undefined}
+                        className={`inline-flex h-10 items-center whitespace-nowrap rounded-[8px] px-2.5 text-[16px] font-medium transition-colors xl:px-3 duration-200 hover:text-[#f25b2a] ${focusRing} ${
+                          isActive(item.href) ? "text-[#f25b2a]" : "text-zinc-800 dark:text-zinc-200"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                }
 
-                            <div className="flex flex-col space-y-4">
-                              {column.items.map((subItem, itemIdx) => (
-                                <Link
-                                  key={`sub-${itemIdx}`}
-                                  href={subItem.href}
-                                  className="group/item flex items-start gap-3.5 p-2.5 rounded-[8px] hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 transition-colors"
-                                >
-                                  <div className="p-2 rounded-[8px] bg-zinc-100 dark:bg-zinc-800 group-hover/item:bg-white dark:group-hover/item:bg-zinc-700 transition-colors flex-shrink-0">
-                                    {subItem.icon}
-                                  </div>
-                                  <div className="flex flex-col text-left">
-                                    <span className="text-[16px] font-medium text-zinc-900 dark:text-white group-hover/item:text-[#f25b2a] transition-colors">
-                                      {subItem.title}
-                                    </span>
-                                    <span className="text-[16px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-snug">
-                                      {subItem.description}
-                                    </span>
-                                  </div>
-                                </Link>
-                              ))}
+                return (
+                  <li
+                    key={item.label}
+                    onMouseEnter={(e) => openNow(item.label, e.timeStamp)}
+                    onMouseLeave={closeSoon}
+                    onBlur={(e) => {
+                      // Tabbing out of an open menu closes it
+                      const next = e.relatedTarget as Node | null;
+                      if (openMenuRef.current === item.label && next && !e.currentTarget.contains(next)) closeMenu();
+                    }}
+                  >
+                    <button
+                      ref={(el) => {
+                        triggerRefs.current[item.label] = el;
+                      }}
+                      type="button"
+                      aria-expanded={open}
+                      aria-controls={id}
+                      onClick={(e) => {
+                        if (!open) {
+                          pinned.current = true;
+                          return openNow(item.label, e.timeStamp);
+                        }
+                        if (e.timeStamp - openedAt.current > 400) setOpenMenu(null);
+                        else pinned.current = true;
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "ArrowDown") {
+                          e.preventDefault();
+                          focusFirstIn.current = item.label;
+                          pinned.current = true;
+                          if (open) document.getElementById(id)?.querySelector<HTMLElement>("a")?.focus();
+                          else openNow(item.label, e.timeStamp);
+                        }
+                      }}
+                      className={`inline-flex h-10 items-center gap-1 whitespace-nowrap rounded-[8px] px-2.5 text-[16px] font-medium transition-colors xl:gap-1.5 xl:px-3 duration-200 hover:text-[#f25b2a] ${focusRing} ${
+                        open || isActive(item.href) ? "text-[#f25b2a]" : "text-zinc-800 dark:text-zinc-200"
+                      }`}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        aria-hidden="true"
+                        strokeWidth={2}
+                        className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    {/* Mega menu — same layout and styling as before */}
+                    <div
+                      id={id}
+                      inert={!open}
+                      className={`absolute left-0 right-0 top-full z-50 w-full pt-3 transition-[opacity,transform] duration-200 ease-out ${
+                        open ? "translate-y-0 scale-100 opacity-100" : "pointer-events-none translate-y-2 scale-[0.98] opacity-0"
+                      }`}
+                    >
+                      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12">
+                        <div className="grid grid-cols-2 divide-x divide-zinc-200 rounded-[8px] border border-zinc-200 bg-white p-6 shadow-none dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 sm:p-8 lg:grid-cols-3">
+                          {columns.map((column, colIdx) => (
+                            <div key={column.title} className={colIdx > 0 ? "pl-6" : "pr-4"}>
+                              <h4 className="mb-4 text-[16px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                                {column.title}
+                              </h4>
+                              <ul className="flex flex-col space-y-4">
+                                {column.items.map((sub) => {
+                                  const Icon = sub.icon;
+                                  return (
+                                    <li key={sub.title}>
+                                      <Link
+                                        href={sub.href}
+                                        onClick={() => setOpenMenu(null)}
+                                        className={`group/item flex items-start gap-3.5 rounded-[8px] p-2.5 transition-colors hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 ${focusRing}`}
+                                      >
+                                        <span className="flex-shrink-0 rounded-[8px] bg-zinc-100 p-2 transition-colors group-hover/item:bg-white dark:bg-zinc-800 dark:group-hover/item:bg-zinc-700">
+                                          <Icon aria-hidden="true" strokeWidth={1.75} className="h-5 w-5 text-zinc-800 transition-colors group-hover/item:text-[#f25b2a] dark:text-zinc-200" />
+                                        </span>
+                                        <span className="flex flex-col text-left">
+                                          <span className="text-[16px] font-medium text-zinc-900 transition-colors group-hover/item:text-[#f25b2a] dark:text-white">
+                                            {sub.title}
+                                          </span>
+                                          <span className="mt-0.5 text-[16px] leading-snug text-zinc-500 dark:text-zinc-400">
+                                            {sub.description}
+                                          </span>
+                                        </span>
+                                      </Link>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+
+                              {colIdx === columns.length - 1 && (
+                                <div className="mt-6 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+                                  <Link
+                                    href={item.href}
+                                    onClick={() => setOpenMenu(null)}
+                                    className={`group/all inline-flex items-center gap-2 rounded-[4px] text-[16px] font-medium text-zinc-900 transition-colors hover:text-[#f25b2a] dark:text-white ${focusRing}`}
+                                  >
+                                    View all {item.label}
+                                    <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-hover/all:translate-x-0.5" />
+                                  </Link>
+                                </div>
+                              )}
                             </div>
-
-                            {/* Extra View All link on last column if applicable */}
-                            {colIdx === getMegaMenuData(item).length - 1 && (
-                              <div className="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                                <Link
-                                  href={item.href}
-                                  className="inline-flex items-center gap-2 text-[16px] font-medium text-zinc-900 dark:text-white hover:text-[#f25b2a] transition-colors"
-                                >
-                                  <span>View all {item.label}</span>
-                                  <FaArrowRight className="h-3.5 w-3.5" />
-                                </Link>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  key={`${item.label}-${index}`}
-                  href={item.href}
-                  className="inline-flex items-center gap-1.5 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors py-2"
-                >
-                  <span>{item.label}</span>
-                </Link>
-              )
-            )}
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          {/* Right Side: Theme Toggle + Desktop Buttons + Mobile Login & Right Sidebar Hamburger Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Actions */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <ThemeToggle />
-
+            {accountAction(
+              "login",
+              `hidden h-10 items-center whitespace-nowrap rounded-[8px] px-3 text-[16px] font-medium text-zinc-800 transition-colors hover:text-[#f25b2a] dark:text-zinc-200 sm:inline-flex ${focusRing}`,
+              "Log in"
+            )}
+            {accountAction(
+              "signup",
+              `group hidden h-10 items-center gap-1.5 whitespace-nowrap rounded-[8px] bg-[#f25b2a] px-4 text-[16px] font-medium text-white transition-colors hover:bg-[#d84b1b] md:inline-flex ${focusRing}`,
+              <>
+                Get Started
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </>
+            )}
             <button
-              onClick={handleLogin}
-              className="text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-[#f25b2a] dark:hover:text-[#f25b2a] transition-all duration-200 hover:scale-105 active:scale-95 px-3 py-1.5 cursor-pointer"
-            >
-              Login
-            </button>
-
-            <div className="hidden md:flex items-center gap-3 xl:gap-4">
-              <Button
-                variant="default"
-                size="default"
-                onClick={handleGetStarted}
-                className="bg-[#f25b2a] hover:bg-[#d84b1b] text-white rounded-[8px] text-[16px] font-medium shadow-md shadow-[#f25b2a]/20 hover:shadow-lg hover:shadow-[#f25b2a]/40 hover:scale-105 active:scale-95 px-5 py-2 h-10 border-none transition-all duration-300 cursor-pointer"
-              >
-                Get Started Free
-              </Button>
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
+              ref={menuButtonRef}
+              type="button"
               onClick={() => setSidebarOpen(true)}
-              aria-label="Open Right Sidebar Menu"
-              className="group text-zinc-900 dark:text-zinc-100 rounded-[8px] h-11 w-11 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all duration-300 cursor-pointer"
+              aria-label="Open menu"
+              aria-expanded={sidebarOpen}
+              aria-controls="mobile-menu"
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] text-zinc-900 transition-colors hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-800 lg:hidden ${focusRing}`}
             >
-              <FaBars className="h-6 w-6 transition-transform duration-300 group-hover:rotate-12" />
-            </Button>
+              <Menu aria-hidden="true" className="h-6 w-6" strokeWidth={1.75} />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* GSAP Animated Right-Side Slide-Over Sidebar Drawer */}
+      {/* Mobile drawer */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-          <div
-            ref={backdropRef}
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
-            onClick={() => closeSidebar()}
-          />
-
+        <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+          <div ref={backdropRef} className="fixed inset-0 bg-black/50" onClick={() => closeSidebar()} aria-hidden="true" />
           <aside
             ref={sidebarRef}
-            className="relative z-10 w-full max-w-[340px] sm:max-w-[380px] bg-white dark:bg-zinc-950 h-full flex flex-col justify-between p-6 border-l border-zinc-200 dark:border-zinc-800 shadow-none overflow-y-auto no-scrollbar"
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+            className="relative z-10 flex h-full w-full max-w-[380px] flex-col overflow-y-auto border-l border-zinc-200 bg-white no-scrollbar dark:border-zinc-800 dark:bg-zinc-950"
           >
-            <div>
-              <div className="flex items-center justify-between pb-6 border-b border-zinc-200 dark:border-zinc-800 gsap-sidebar-item">
-                <div className="flex items-center">
-                  <Image
-                    src={lightLogoSrc || logoSrc}
-                    alt={logoAlt}
-                    width={200}
-                    height={50}
-                    className="h-12 w-auto object-contain dark:hidden"
-                  />
-                  <Image
-                    src={darkLogoSrc || logoSrc}
-                    alt={logoAlt}
-                    width={200}
-                    height={50}
-                    className="h-12 w-auto object-contain hidden dark:block"
-                  />
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <ThemeToggle />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => closeSidebar()}
-                    className="group rounded-[8px] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:scale-110 active:scale-90 transition-all duration-300"
-                  >
-                    <FaXmark className="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" />
-                  </Button>
-                </div>
+            <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
+              <Link href={logoHref} onClick={() => closeSidebar()} aria-label="Foxses home" className={`rounded-[6px] ${focusRing}`}>
+                <Image src={lightLogoSrc || logoSrc} alt={logoAlt} width={200} height={50} className="h-10 w-auto object-contain dark:hidden" />
+                <Image src={darkLogoSrc || logoSrc} alt={logoAlt} width={200} height={50} className="hidden h-10 w-auto object-contain dark:block" />
+              </Link>
+              <div className="flex items-center gap-1">
+                <ThemeToggle />
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={() => closeSidebar()}
+                  aria-label="Close menu"
+                  className={`inline-flex h-10 w-10 items-center justify-center rounded-[8px] text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 ${focusRing}`}
+                >
+                  <X aria-hidden="true" className="h-6 w-6" strokeWidth={1.75} />
+                </button>
               </div>
-
-              {/* Sidebar Menu Items */}
-              <nav className="py-6 flex flex-col space-y-2">
-                {menuItems.map((item, index) => (
-                  <div key={`sidebar-${item.label}-${index}`} className="gsap-sidebar-item">
-                    {item.hasDropdown ? (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => toggleDropdown(item.label)}
-                          className="w-full flex items-center justify-between rounded-[8px] px-4 py-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer transition-all duration-200 text-left group/btn"
-                        >
-                          <span className="group-hover/btn:text-[#f25b2a] transition-colors">{item.label}</span>
-                          <FaChevronDown
-                            className={`h-4 w-4 text-zinc-500 transition-all duration-300 ${
-                              expandedItems[item.label] ? "rotate-180 text-[#f25b2a]" : "group-hover/btn:text-[#f25b2a]"
-                            }`}
-                          />
-                        </button>
-
-                        {/* Expandable Mobile Submenu with Buttery Smooth CSS Grid Accordion Transition */}
-                        <div
-                          className={`grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                            expandedItems[item.label]
-                              ? "grid-rows-[1fr] opacity-100 mt-2 mb-1"
-                              : "grid-rows-[0fr] opacity-0 my-0"
-                          }`}
-                        >
-                          <div className="overflow-hidden">
-                            <div className="ml-4 pl-3 border-l-2 border-[#f25b2a]/40 dark:border-[#f25b2a]/60 py-2 space-y-3">
-                              {getMegaMenuData(item).map((column, colIdx) => (
-                                <div key={`mob-col-${colIdx}`} className="flex flex-col space-y-2">
-                                  <span className="text-[13px] font-semibold text-[#f25b2a] uppercase tracking-wider px-2 pt-1">
-                                    {column.title}
-                                  </span>
-                                  {column.items.map((subItem, itemIdx) => (
-                                    <Link
-                                      key={`mob-sub-${itemIdx}`}
-                                      href={subItem.href}
-                                      onClick={() => closeSidebar()}
-                                      className="group/sub flex items-center gap-2.5 px-2.5 py-2 rounded-[8px] hover:bg-zinc-100 dark:hover:bg-zinc-900/90 transition-all duration-200 hover:translate-x-1.5"
-                                    >
-                                      <div className="p-1.5 rounded-[6px] bg-zinc-100 dark:bg-zinc-800/90 group-hover/sub:bg-[#f25b2a]/10 dark:group-hover/sub:bg-[#f25b2a]/20 transition-colors flex-shrink-0">
-                                        {subItem.icon}
-                                      </div>
-                                      <span className="text-[15px] font-medium text-zinc-800 dark:text-zinc-200 group-hover/sub:text-[#f25b2a] transition-colors">
-                                        {subItem.title}
-                                      </span>
-                                    </Link>
-                                  ))}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        onClick={() => closeSidebar()}
-                        className="block rounded-[8px] px-4 py-3 text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all hover:translate-x-1"
-                      >
-                        {item.label}
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </nav>
             </div>
 
-            {/* Sidebar Bottom Action Buttons */}
-            <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col space-y-3 gsap-sidebar-item">
-              <button
-                onClick={handleLogin}
-                className="w-full py-3 text-center text-[16px] font-medium text-zinc-900 dark:text-zinc-100 hover:text-[#f25b2a] transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              >
-                Login
-              </button>
+            <nav aria-label="Mobile" className="flex-1 px-5 py-4">
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-900">
+                {menuItems.map((item) => {
+                  const columns = columnsFor(item);
+                  if (!item.hasDropdown || columns.length === 0) {
+                    return (
+                      <li key={item.label}>
+                        <Link
+                          href={item.href}
+                          onClick={() => closeSidebar()}
+                          className={`flex min-h-[52px] items-center text-[16px] font-medium text-zinc-900 transition-colors hover:text-[#f25b2a] dark:text-zinc-100 ${focusRing}`}
+                        >
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  }
+                  const open = expanded === item.label;
+                  const panelId = `mobile-${slug(item.label)}`;
+                  return (
+                    <li key={item.label}>
+                      <button
+                        type="button"
+                        aria-expanded={open}
+                        aria-controls={panelId}
+                        onClick={() => setExpanded(open ? null : item.label)}
+                        className={`flex min-h-[52px] w-full items-center justify-between text-left text-[16px] font-medium transition-colors hover:text-[#f25b2a] ${focusRing} ${
+                          open ? "text-[#f25b2a]" : "text-zinc-900 dark:text-zinc-100"
+                        }`}
+                      >
+                        {item.label}
+                        {open ? <Minus aria-hidden="true" className="h-4 w-4" /> : <Plus aria-hidden="true" className="h-4 w-4 text-zinc-500" />}
+                      </button>
+                      <div
+                        id={panelId}
+                        className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                      >
+                        <ul className="overflow-hidden" inert={!open}>
+                          {columns.flatMap((c) => c.items).map((sub) => {
+                            const Icon = sub.icon;
+                            return (
+                              <li key={`${sub.title}-${sub.href}`}>
+                                <Link
+                                  href={sub.href}
+                                  onClick={() => closeSidebar()}
+                                  className={`group/sub flex min-h-[44px] items-center gap-3 rounded-[8px] px-2 py-2 text-[16px] text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-[#f25b2a] dark:text-zinc-300 dark:hover:bg-zinc-900 ${focusRing}`}
+                                >
+                                  <Icon aria-hidden="true" strokeWidth={1.75} className="h-[18px] w-[18px] shrink-0 text-zinc-500 group-hover/sub:text-[#f25b2a]" />
+                                  {sub.title}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                          <li className="pb-3">
+                            <Link
+                              href={item.href}
+                              onClick={() => closeSidebar()}
+                              className={`inline-flex min-h-[44px] items-center gap-2 px-2 text-[16px] font-medium text-zinc-900 hover:text-[#f25b2a] dark:text-white ${focusRing}`}
+                            >
+                              View all {item.label}
+                              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
 
-              <Button
-                variant="default"
-                onClick={handleGetStarted}
-                className="w-full justify-center rounded-[8px] bg-[#f25b2a] hover:bg-[#d84b1b] text-white text-[16px] font-medium shadow-md shadow-[#f25b2a]/20 hover:shadow-lg hover:shadow-[#f25b2a]/40 hover:scale-105 active:scale-95 py-3 border-none transition-all duration-300 cursor-pointer"
-              >
-                Get Started Free
-              </Button>
+            <div className="flex flex-col gap-3 border-t border-zinc-200 px-5 py-5 dark:border-zinc-800">
+              {accountAction(
+                "login",
+                `flex h-12 items-center justify-center rounded-[8px] border border-zinc-200 text-[16px] font-medium text-zinc-900 transition-colors hover:border-[#f25b2a]/40 hover:text-[#f25b2a] dark:border-zinc-800 dark:text-zinc-100 ${focusRing}`,
+                "Log in",
+                true
+              )}
+              {accountAction(
+                "signup",
+                `flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[#f25b2a] text-[16px] font-medium text-white transition-colors hover:bg-[#d84b1b] ${focusRing}`,
+                <>
+                  Get Started
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </>,
+                true
+              )}
             </div>
           </aside>
         </div>
