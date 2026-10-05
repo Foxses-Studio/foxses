@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Foxses",
   description: "Welcome to Foxses App",
+  verification: {
+    google: "fvzJCThvahFQxwon4xTIb6VMhaAM5roLHyYv5LhWnBw",
+  },
 };
 
 export default function RootLayout({

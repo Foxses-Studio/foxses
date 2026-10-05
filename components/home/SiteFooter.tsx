@@ -20,31 +20,31 @@ interface FooterLink {
 const FOOTER_NAV: { title: string; links: FooterLink[] }[] = [
   {
     title: "Products",
-    links: PRODUCT_ORDER.map((p) => ({ label: PRODUCT_META[p].name, href: "#products" })),
+    links: PRODUCT_ORDER.map((p) => ({ label: PRODUCT_META[p].name, href: "/#products" })),
   },
   {
     title: "Solutions",
     links: [
-      { label: "Business Owners", href: "#teams" },
-      { label: "Operations", href: "#teams" },
-      { label: "Finance", href: "#teams" },
-      { label: "HR & People", href: "#teams" },
-      { label: "Customer Support", href: "#teams" },
+      { label: "Business Owners", href: "/#teams" },
+      { label: "Operations", href: "/#teams" },
+      { label: "Finance", href: "/#teams" },
+      { label: "HR & People", href: "/#teams" },
+      { label: "Customer Support", href: "/#teams" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Resources", href: "#resources" },
+      { label: "Resources", href: "/#resources" },
       { label: "Foxses Pay on npm", href: "https://www.npmjs.com/package/@foxses/pay", external: true },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "Why Foxses", href: "#why" },
-      { label: "Security", href: "#security" },
-      { label: "Pricing", href: "#pricing" },
+      { label: "Why Foxses", href: "/#why" },
+      { label: "Security", href: "/#security" },
+      { label: "Pricing", href: "/#pricing" },
     ],
   },
 ];
