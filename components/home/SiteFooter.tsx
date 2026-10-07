@@ -49,8 +49,11 @@ const FOOTER_NAV: { title: string; links: FooterLink[] }[] = [
   },
 ];
 
-/** Add only real pages, e.g. { label: "Privacy Policy", href: "/privacy" } */
-const LEGAL_LINKS: FooterLink[] = [];
+/** Add only real pages */
+const LEGAL_LINKS: FooterLink[] = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Return-Refund Policy", href: "/return-refund-policy" },
+];
 /** Add only real profiles, e.g. { label: "LinkedIn", href: "https://…" } */
 const SOCIAL_LINKS: FooterLink[] = [];
 
